@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Philosophy Exam Trainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #090f2a;
+      --card: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --accent-strong: #0ea5e9;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --error: #f87171;
+      --success: #4ade80;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.6);
+      --radius-xl: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: radial-gradient(circle at top left, #1e293b 0, #020617 45%, #020617 100%);
+      color: var(--text);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 60%);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #38bdf8 0, #0ea5e9 35%, #0369a1 70%, #020617 100%);
+      box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.4), 0 0 40px rgba(56, 189, 248, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e5e7eb;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .brand-text-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      gap: 4px;
+    }
+
+    .mode-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn span.icon {
+      font-size: 14px;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.16), rgba(37, 99, 235, 0.18));
+      color: #f9fafb;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 18px;
+      padding: 18px 22px 22px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top, var(--bg-alt), var(--card));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      padding: 18px 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.12), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.12), transparent 45%);
+      opacity: 0.7;
+      mix-blend-mode: screen;
+    }
+
+    .panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .question-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .question-box {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 16px;
+      padding: 12px 14px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.7);
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .options-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .option-item {
+      position: relative;
+    }
+
+    .option-button {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      border-radius: 999px;
+      padding: 8px 12px;
+      padding-left: 40px;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transition: all 0.18s ease;
+    }
+
+    .option-button:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+      transform: translateY(-0.5px);
+    }
+
+    .option-button.selected {
+      border-color: var(--accent-strong);
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.95));
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.7);
+    }
+
+    .option-button.correct {
+      border-color: var(--success);
+      box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.7);
+    }
+
+    .option-button.incorrect {
+      border-color: var(--error);
+      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+    }
+
+    .option-label {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: #f9fafb;
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 30px rgba(37, 99, 235, 0.65);
+    }
+
+    .btn.subtle {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .btn.subtle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .btn.ghost:hover {
+      border-style: solid;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--success);
+    }
+
+    .status-dot.warn {
+      background: #fbbf24;
+    }
+
+    .status-dot.error {
+      background: var(--error);
+    }
+
+    .timer {
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22c55e, #a3e635);
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.7);
+      transition: width 0.18s ease;
+    }
+
+    .exam-setup-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      margin-top: 4px;
+    }
+
+    .field {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .field-label {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field select {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 5px 14px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      min-width: 120px;
+    }
+
+    .exam-results {
+      margin-top: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      max-height: 260px;
+      overflow: auto;
+      padding: 10px 10px 8px;
+      font-size: 12px;
+    }
+
+    .exam-result-item {
+      border-bottom: 1px dashed rgba(75, 85, 99, 0.7);
+      padding: 6px 0;
+    }
+
+    .exam-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .exam-result-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .exam-result-q {
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .exam-result-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 11px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 1px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .tag.ok {
+      border-color: rgba(74, 222, 128, 0.7);
+      color: var(--success);
+    }
+
+    .tag.bad {
+      border-color: rgba(248, 113, 113, 0.7);
+      color: var(--error);
+    }
+
+    .hint-text {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .hint-text strong {
+      color: var(--accent-strong);
+      font-weight: 500;
+    }
+
+    footer {
+      padding: 6px 18px 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+      gap: 8px;
+    }
+
+    footer span {
+      opacity: 0.8;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">Φ</div>
+        <div>
+          <div class="brand-text-title">Philosophy Exam Studio</div>
+          <div class="brand-text-sub">601 multiple-choice questions • exam &amp; trainer modes</div>
+        </div>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="practice">
+          <span class="icon">🎯</span>
+          Practice mode
+        </button>
+        <button class="mode-btn" data-mode="exam">
+          <span class="icon">📝</span>
+          Exam simulation
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel" id="left-panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span id="mode-label-prefix">Practice</span>
+              <span>Question</span>
+            </div>
+            <div class="badge" id="question-counter">Question 1 / 601</div>
+          </div>
+
+          <div class="question-meta">
+            <div class="pill">
+              <span class="pill-dot"></span>
+              <span id="mode-description">Instant feedback trainer</span>
+            </div>
+            <div class="pill">
+              <span>Question ID:</span>
+              <strong id="question-id">–</strong>
+            </div>
+          </div>
+
+          <div class="question-box">
+            <div class="question-text" id="question-text">
+              Loading question...
+            </div>
+            <ul class="options-list" id="options-list"></ul>
+          </div>
+
+          <div class="btn-row" id="practice-buttons">
+            <button class="btn primary" id="btn-check">
+              ✅ Check answer
+            </button>
+            <button class="btn subtle" id="btn-next">
+              ➜ Next question
+            </button>
+            <button class="btn ghost" id="btn-reveal">
+              👁 Show correct answer
+            </button>
+          </div>
+
+          <div class="btn-row" id="exam-buttons" style="display:none;">
+            <button class="btn subtle" id="btn-prev-q">
+              ← Previous
+            </button>
+            <button class="btn subtle" id="btn-next-q">
+              Next →
+            </button>
+            <button class="btn primary" id="btn-finish-exam">
+              ✅ Finish exam &amp; show result
+            </button>
+          </div>
+
+          <div class="status-line">
+            <div class="status-pill">
+              <span class="status-dot" id="status-dot"></span>
+              <span id="status-text">Choose an option and press “Check answer”.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>Session Overview</span>
+            </div>
+            <div class="badge">
+              <span id="timer-label">Practice session</span>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Correct answers</div>
+              <div class="stat-value" id="stat-correct">0</div>
+              <div class="progress-track">
+                <div class="progress-bar" id="progress-correct"></div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Questions attempted</div>
+              <div class="stat-value" id="stat-attempted">0</div>
+              <div class="progress-track">
+                <div class="progress-bar" id="progress-attempted"></div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Score</div>
+              <div class="stat-value" id="stat-score">0%</div>
+              <div class="progress-track">
+                <div class="progress-bar" id="progress-score"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="exam-setup-row" id="exam-setup">
+            <div class="field">
+              <span class="field-label">Exam size</span>
+              <select id="exam-size">
+                <option value="30">30 questions</option>
+                <option value="60" selected>60 questions</option>
+                <option value="90">90 questions</option>
+                <option value="120">120 questions</option>
+                <option value="all">All (601 questions)</option>
+              </select>
+            </div>
+            <div class="field">
+              <span class="field-label">Timer</span>
+              <select id="exam-timer">
+                <option value="0">No timer</option>
+                <option value="30">30 minutes</option>
+                <option value="60" selected>60 minutes</option>
+                <option value="90">90 minutes</option>
+              </select>
+            </div>
+            <button class="btn primary" id="btn-start-exam">
+              🧪 Start exam
+            </button>
+          </div>
+
+          <div class="status-line">
+            <div class="status-pill">
+              <span class="status-dot warn"></span>
+              <span id="exam-status-text">Exam mode: random unique questions, results at the end.</span>
+            </div>
+            <div class="status-pill">
+              <span class="timer" id="exam-timer-display">00:00</span>
+            </div>
+          </div>
+
+          <p class="hint-text">
+            <strong>Practice mode</strong> shows correctness instantly and lets you reveal answers.
+            <strong>Exam mode</strong> hides the correct options until you finish and gives you a full report.
+          </p>
+
+          <div class="exam-results" id="exam-results" style="display:none;"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Dataset: 601 philosophy MCQ questions (JSON embedded).</span>
+      <span>Tip: use <strong>Practice</strong> for learning, then switch to <strong>Exam</strong> to simulate the final.</span>
+    </footer>
+  </div>
+
+  <script>
+    const QUESTIONS = [{"id": 1, "question": "\"All sciences are divided into physics and stamp collecting\", - said:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Immanuel Kant", "D": "Albert Einstein", "E": "Isaac Newton"}, "answer": "A"}, {"id": 2, "question": "\"Everything flows\", there is nothing constant in the universe, considered:", "options": {"A": "Thales", "B": "Anaximander", "C": "Democritus", "D": "Heraclitus", "E": "Protagoras"}, "answer": "D"}, {"id": 3, "question": "\"I know that I don't know anything, but others don't know that either\" believed:", "options": {"A": "Plato", "B": "Seneca", "C": "Epicurus", "D": "Socrates", "E": "Protagoras"}, "answer": "D"}, {"id": 4, "question": "\"Man is the measure of all things,\" - says:", "options": {"A": "Parmenides", "B": "Protagoras", "C": "Socrates", "D": "Democritus", "E": "Plato"}, "answer": "B"}, {"id": 5, "question": "\"Summa Theologica\" is the work by:", "options": {"A": "St. Thomas Aquinas", "B": "St. Anselm", "C": "St. Augustine", "D": "Socrates", "E": "Thale"}, "answer": "A"}, {"id": 6, "question": "\"The book of nature is written in the language of mathematics,“ - argued:", "options": {"A": "Copernicus", "B": "Galileo", "C": "Bacon", "D": "Descartes", "E": "Newton"}, "answer": "B"}, {"id": 7, "question": "\"The Republic\" is the famous work by:", "options": {"A": "Plato", "B": "Socrates", "C": "Thales", "D": "Descartes", "E": "Democritus"}, "answer": "A"}, {"id": 8, "question": "\"There is as much truth in every knowledge as there is mathematics”, - believed:", "options": {"A": "Copernicus", "B": "Galileo", "C": "Kant", "D": "Descartes", "E": "Newton"}, "answer": "C"}, {"id": 9, "question": "A class of meta-ethical theories in which all members entail that no one has any moral knowledge, more over it is impossible:", "options": {"A": "moral skepticism", "B": "moral nihilism", "C": "moral absenteeism", "D": "ethical realism", "E": "agnosticism"}, "answer": "A"}, {"id": 10, "question": "A person who behaves in a way that is acceptable by most people and who avoids doing things that could be considered different or unusual:", "options": {"A": "proponent", "B": "follower", "C": "supporter", "D": "conformist", "E": "adherent"}, "answer": "D"}, {"id": 11, "question": "A person who does not behave the way most people behave:", "options": {"A": "antagonist", "B": "nonconformist", "C": "remonstrant", "D": "opponent", "E": "adversary"}, "answer": "B"}, {"id": 12, "question": "A philosophical concept that denies the possibility of a reasonable knowledge of reality:", "options": {"A": "Irrationalism", "B": "Existentialism", "C": "Utilitarianism", "D": "Personalism", "E": "Pragmatism"}, "answer": "A"}, {"id": 13, "question": "A philosophical method based on decomposition phenomenon into its constituent parts and sides:", "options": {"A": "Analysis", "B": "Synthesis", "C": "Dialectic", "D": "Metaphysics", "E": "Eclecticism"}, "answer": "A"}, {"id": 14, "question": "A philosophical method based on the consideration of things, and processes from two opposite points of view:", "options": {"A": "Analysis", "B": "Synthesis", "C": "Dialectics", "D": "Metaphysics", "E": "Eclecticism"}, "answer": "C"}, {"id": 15, "question": "A philosophical method based on the principles of interpretation of any texts or systems of concepts:", "options": {"A": "Maieutics", "B": "Dialectics", "C": "Hermeneutics", "D": "Eclectic", "E": "Sophistry"}, "answer": "C"}, {"id": 16, "question": "A principle is opposite to verification:", "options": {"A": "falsification", "B": "verification", "C": "stimulation", "D": "regeneration", "E": "generalization"}, "answer": "A"}, {"id": 17, "question": "A Renaissance thinker who believed that a ruler should combine the qualities of a lion and a fox:", "options": {"A": "Campanella", "B": "More", "C": "Petrarch", "D": "Bruno", "E": "Machiavelli"}, "answer": "E"}, {"id": 18, "question": "A thinker who claims that a philosopher should be at the head of the state:", "options": {"A": "Aristotle", "B": "Democritus", "C": "Heraclitus", "D": "Epicurus", "E": "Plato"}, "answer": "E"}, {"id": 19, "question": "A thinker whose ideas about man reflect the following judgment: \"Man is a wolf to man\":", "options": {"A": "Spinosa", "B": "Hobbes", "C": "Pascal", "D": "Hegel", "E": "Kant"}, "answer": "B"}, {"id": 20, "question": "A trait or quality that is deemed morally good and thus is valued as the basis of good moral being:", "options": {"A": "virtue", "B": "dignity", "C": "charity", "D": "prudence", "E": "justice"}, "answer": "A"}, {"id": 21, "question": "According to ... all phenomena in the world are planned in advance and the possibility of change is rejected:", "options": {"A": "fatalism", "B": "determinism", "C": "formalism", "D": "indeterminism", "E": "providentialism"}, "answer": "A"}, {"id": 22, "question": "According to A. Camus, way out of absurdity situation:", "options": {"A": "religious faith", "B": "suicide", "C": "revolt", "D": "reconciliation with absurdity", "E": "religious struggle"}, "answer": "C"}, {"id": 23, "question": "According to Al Farabi, the ideal of social organization:", "options": {"A": "city of freedom", "B": "city of panic", "C": "city of the sun", "D": "city of ambition", "E": "virtuous city"}, "answer": "E"}, {"id": 24, "question": "According to Nietzsche, there are no transcendental ethics or values for us to use, so:", "options": {"A": "We must live in transcendental world", "B": "We must destroy everything", "C": "We must live its imagine form", "D": "We must live in absurdity", "E": "We must create our own values"}, "answer": "E"}, {"id": 25, "question": "According to Parmenides, being is:", "options": {"A": "eternal, invariable, united", "B": "ideal, eternal, multiple", "C": "the unity of the spiritual and material", "D": "material, variable, ultimate", "E": "invariable, plural"}, "answer": "A"}, {"id": 26, "question": "According to Pythagoras \"All things are the essence of...\":", "options": {"A": "a number", "B": "the cause", "C": "a reality", "D": "an idea", "E": "an illusion"}, "answer": "A"}, {"id": 27, "question": "Adam Bol - the principle first proclaimed:", "options": {"A": "A. Baitursynov", "B": "Sh. Kudaiberdiev", "C": "Sh. Ualikhanov", "D": "A. Bukeikhanov", "E": "A. Kunanbaev"}, "answer": "E"}, {"id": 28, "question": "An ancient philosopher who believed that the material world consists of atoms:", "options": {"A": "Aristotle", "B": "Pyrrho", "C": "Zeno", "D": "Democritus", "E": "Heraclitus"}, "answer": "D"}, {"id": 29, "question": "An outstanding representative of medieval scholasticism:", "options": {"A": "Al-Kindi", "B": "Aurelius Augustine", "C": "Thomas Aquinas", "D": "Ibn Sina", "E": "Al-Farabi"}, "answer": "C"}, {"id": 30, "question": "Anaximander, a philosopher came after:", "options": {"A": "Thales", "B": "Socrates", "C": "Pythagoras", "D": "Descartes", "E": "Richard Rorty"}, "answer": "A"}, {"id": 31, "question": "Ancient Greek philosophers, who took money for teaching wisdom:", "options": {"A": "atomists", "B": "representatives of Peripatetic school", "C": "sophists", "D": "Socratics", "E": "all Ancient Greek thinkers"}, "answer": "C"}, {"id": 32, "question": "Ancient philosopher, who recognized water, earth, fire and air as a system of world’s eternal elements and forces:", "options": {"A": "Epicurus", "B": "Empedocles", "C": "Anaximenes", "D": "Anaximander", "E": "Heraclitus"}, "answer": "B"}, {"id": 33, "question": "Anthropocentrism and humanism are inherent in the epoch of:", "options": {"A": "Ancient Philosophy", "B": "Medieval Philosophy", "C": "Renaissance Philosophy", "D": "Philosophy of Modern Time", "E": "Philosophy of 20th century"}, "answer": "C"}, {"id": 34, "question": "Any change, transformation, and process is:", "options": {"A": "motion", "B": "evolution", "C": "involution", "D": "development", "E": "progress"}, "answer": "A"}, {"id": 35, "question": "Apeiron is", "options": {"A": "single, eternal, indefinite", "B": "formal logic", "C": "eidos", "D": "hyle", "E": "form"}, "answer": "A"}, {"id": 36, "question": "Aristotle divided the Sciences into three group:", "options": {"A": "Theoretical, practical and rational", "B": "Theoretical, practical and cultural", "C": "Theoretical, practical and ethical", "D": "Theoretical, practical and empirical", "E": "Theoretical, practical and poetic"}, "answer": "E"}, {"id": 37, "question": "Author by the famous book \"The Selfish Gene\"(1976):", "options": {"A": "Ernest Rutherford", "B": "Immanuel Kant", "C": "Richard Dawkins", "D": "Albert Einstein", "E": "Isaac Newton"}, "answer": "C"}, {"id": 38, "question": "Author by the famous “Mathematical Principles of Natural Philosophy”:", "options": {"A": "Francis Bacon", "B": "Gottfried Leibniz", "C": "Isaac Newton", "D": "Benedict Spinoza", "E": "Rene Descartes"}, "answer": "C"}, {"id": 39, "question": "Author of \"Apology of Socrates\" is:", "options": {"A": "Plato", "B": "Pythogoras", "C": "Robert Nozick", "D": "Richard Rorty", "E": "Democritus"}, "answer": "A"}, {"id": 40, "question": "Author of \"Utopia...\":", "options": {"A": "T. More", "B": "T. Campanella", "C": "N. Machiavelli", "D": "J. Bruno", "E": "N. Copernicus"}, "answer": "A"}, {"id": 41, "question": "Author of 10 Categories of logics:", "options": {"A": "Aristotele", "B": "Plato", "C": "Thales", "D": "Decard", "E": "Democritus"}, "answer": "A"}, {"id": 42, "question": "Author of concept of the scientific knowledge model:", "options": {"A": "I. Lakatos", "B": "G. Leibniz", "C": "J. Fichte", "D": "G. Hegel", "E": "A. Schopenhauer"}, "answer": "A"}, {"id": 43, "question": "Author of the doctrine of the four truths:", "options": {"A": "Confucius", "B": "Patanjali", "C": "Gautama", "D": "Lao Tzu", "E": "Mahavira"}, "answer": "B"}, {"id": 44, "question": "Author of the mechanical scientific vision of the world:", "options": {"A": "Isaac Newton", "B": "Gottfried Leibniz", "C": "Benedict Spinoza", "D": "Rene Descartes", "E": "Francis Bacon"}, "answer": "A"}, {"id": 45, "question": "Author of the work \"Existentialism is humanism\":", "options": {"A": "K. Jaspers", "B": "A. Camus", "C": "M. Heidegger", "D": "G.O. Marcel", "E": "J.-P. Sartre"}, "answer": "E"}, {"id": 46, "question": "Author of the work \"The Open Society and Its Enemies\", postpositivist:", "options": {"A": "L. Wittgenstein", "B": "T. Adorno", "C": "J. Habermas", "D": "T. Kuhn", "E": "K. Popper"}, "answer": "E"}, {"id": 47, "question": "Author of the work \"«The Revolt of the Masses»:", "options": {"A": "K. Jaspers", "B": "E. Fromm", "C": "E. Toffler", "D": "A. Schweitzer", "E": "J. Ortega y Gasset"}, "answer": "E"}, {"id": 48, "question": "Author of the “double-truth” theory:", "options": {"A": "Ibn-Sina", "B": "Ibn-Rushd", "C": "Al-Kindi", "D": "Ibn-Arabi", "E": "Al-Ghazali"}, "answer": "B"}, {"id": 49, "question": "Basic laws and categories of formal logic discovered:", "options": {"A": "Socrates", "B": "Empedocles", "C": "Aristotle", "D": "Plato", "E": "Plotinus"}, "answer": "C"}, {"id": 50, "question": "Before the Islam run important role in the spiritual culture of Qazaq, there is:", "options": {"A": "Tribalism", "B": "Sufism", "C": "Tengrianism", "D": "Anarchism", "E": "Hedonism"}, "answer": "C"}, {"id": 51, "question": "Belongs to or with something is:", "options": {"A": "property", "B": "quantity", "C": "quality", "D": "measure", "E": "space"}, "answer": "A"}, {"id": 52, "question": "Categories of aesthetics:", "options": {"A": "good and evil", "B": "being and consciousness", "C": "concept and judgment", "D": "beautiful and ugly", "E": "form and content"}, "answer": "D"}, {"id": 53, "question": "Category, reflecting the external, sensibly perceived sides of objects and processes:", "options": {"A": "phenomenon", "B": "image", "C": "configuration", "D": "profile", "E": "shape"}, "answer": "A"}, {"id": 54, "question": "Christian world outlook stands for the idea of creation of the world out of nothing. It is …:", "options": {"A": "Theocentrism", "B": "Faith", "C": "Spirituality", "D": "Symbolism", "E": "Creationism"}, "answer": "E"}, {"id": 55, "question": "Class struggle is a principle of:", "options": {"A": "Intuitionism", "B": "Marxism", "C": "Existentialism", "D": "Pragmatism", "E": "Structuralism"}, "answer": "B"}, {"id": 56, "question": "Confucius and Meng-tzu believed that human nature is:", "options": {"A": "Inherently evil", "B": "Initially fair", "C": "Initially moral", "D": "Initially beautiful", "E": "Inherently good"}, "answer": "E"}, {"id": 57, "question": "Created the heliocentric system:", "options": {"A": "Nicolaus Copernicus", "B": "Giordano Bruno", "C": "Nicholas of Cus", "D": "Galileo Galilei", "E": "Tycho Brahe"}, "answer": "A"}, {"id": 58, "question": "Currently, the most recognized classification of Sciences is based on:", "options": {"A": "Profession of scientist", "B": "Vocation of scientist", "C": "The object of research", "D": "The subject of research", "E": "Human abilities"}, "answer": "D"}, {"id": 59, "question": "Democritus is belonging to … school", "options": {"A": "atomistic", "B": "ionian", "C": "idealist", "D": "elestic", "E": "hellenistic"}, "answer": "A"}, {"id": 60, "question": "Dialectics in antique philosophy means:", "options": {"A": "the art of debate", "B": "alternative style of thinking", "C": "the development of the “absolute idea”", "D": "the study of the objective world", "E": "the theory of scientific cognition"}, "answer": "A"}, {"id": 61, "question": "Doubts in varying degrees the existence of knowledge and reality:", "options": {"A": "Skepticism", "B": "Empiricism", "C": "Rationalism", "D": "Pragmatism", "E": "Solipsism"}, "answer": "A"}, {"id": 62, "question": "Empiricism recognized as the foundation of knowledge is:", "options": {"A": "Myth", "B": "Faith", "C": "Experience", "D": "Will", "E": "Reason"}, "answer": "C"}, {"id": 63, "question": "Existentialist J.-P. Sartre thought that person was condemned to:", "options": {"A": "freedom", "B": "happiness", "C": "suffering", "D": "love", "E": "death"}, "answer": "A"}, {"id": 64, "question": "Father of Greek philosophy is:", "options": {"A": "Thales", "B": "Pythagoras", "C": "st. Augustine", "D": "Socrates", "E": "Richard Rorty"}, "answer": "A"}, {"id": 65, "question": "For Hegel, Absolute Idea develops over time in a series of dialectic movements from:", "options": {"A": "Affirmation + Negation", "B": "Unity + struggle = opposites", "C": "Quantitative + qualitative = certain limit", "D": "Thesis + antithesis = synthesis", "E": "Own self + not-self = Absolute Idea"}, "answer": "D"}, {"id": 66, "question": "Forms of worldview:", "options": {"A": "Consciousness, thinking, mind", "B": "Myth, religion, philosophy", "C": "God, nature, society", "D": "Ontology, epistemology, axiology", "E": "Man, person, individual"}, "answer": "B"}, {"id": 67, "question": "Founder of Taoism:", "options": {"A": "Confucius", "B": "Lao Tzu", "C": "Shang Di", "D": "Mencius", "E": "Huang Di"}, "answer": "B"}, {"id": 68, "question": "Francis Bacon was the founder of empiricism and he believed that the purpose of science is:", "options": {"A": "To achieve the truth", "B": "Do experiments", "C": "Make reasonable arguments", "D": "To benefit humanity", "E": "Winning an argument"}, "answer": "D"}, {"id": 69, "question": "From the point of view of externalism, the emergence of science is due to:", "options": {"A": "External circumstances", "B": "Social environment", "C": "Economic situation", "D": "Political power", "E": "All of the above"}, "answer": "E"}, {"id": 70, "question": "He created a philosophical system based on the dialectical method:", "options": {"A": "Socrates", "B": "Rene Descartes", "C": "Francis Bacon", "D": "Georg Hegel", "E": "Aristotle"}, "answer": "D"}, {"id": 71, "question": "Idea of separation into the world of things and the world of ideas belong to:", "options": {"A": "Plato", "B": "Pythagoras", "C": "Thales", "D": "Descartes", "E": "Richard Rorty"}, "answer": "A"}, {"id": 72, "question": "Idealism is a systematic philosophy which teaches the supremacy of:", "options": {"A": "Spirit over matter", "B": "god", "C": "noumena", "D": "materialism", "E": "knowledge"}, "answer": "A"}, {"id": 73, "question": "Immanence idea are known as:", "options": {"A": "Innate ideas", "B": "Adventitious ideas", "C": "Factitious ideas", "D": "Beliefs", "E": "rational thoughts"}, "answer": "A"}, {"id": 74, "question": "Impartial and just treatment or behavior without favoritism or discrimination:", "options": {"A": "fairness", "B": "straightforwardness", "C": "rigidity", "D": "humbleness", "E": "tolerance"}, "answer": "A"}, {"id": 75, "question": "In Ancient Greece, an idea that governed the creation of works of art with correspondence to the physical world that understood as a model for beauty, truth, and the good:", "options": {"A": "logos", "B": "anamnesis", "C": "gnosis", "D": "eidos", "E": "mimesis"}, "answer": "E"}, {"id": 76, "question": "In ancient Greek philosophy, the impossibility of think about motion has been proven in:", "options": {"A": "Aristotelian syllogisms", "B": "Zeno’s paradoxes", "C": "Pythagorean proves", "D": "Socrates’ definitions", "E": "Plato's dialogues"}, "answer": "B"}, {"id": 77, "question": "In ancient times the concept “physis” meant:", "options": {"A": "nature", "B": "society", "C": "psyche", "D": "state", "E": "human being"}, "answer": "A"}, {"id": 78, "question": "In Hellenistic philosophy the word “ataraxia” means:", "options": {"A": "equanimity, impassivity", "B": "heartlessness", "C": "fatigue, tiredness", "D": "wisdom", "E": "activity and creativity"}, "answer": "A"}, {"id": 79, "question": "In Hinduism, the absolute reality is designated by the concept:", "options": {"A": "atman", "B": "moksha", "C": "jinx", "D": "Brahman", "E": "ahimsa"}, "answer": "D"}, {"id": 80, "question": "In Taoism adherence to the principle of “naturalness” means:", "options": {"A": "following to the Dao as the law of nature and cosmos", "B": "following to your own needs", "C": "transforming the outer world for the better", "D": "implementing the principle of love for the neighbor", "E": "faith in God"}, "answer": "A"}, {"id": 81, "question": "In the ontology, what does the Greek word “ontos” mean:", "options": {"A": "being", "B": "dialectics", "C": "consciousness", "D": "cognition", "E": "knowledge"}, "answer": "A"}, {"id": 82, "question": "In the philosophy of science, the problem of distinguishing the science and non-science:", "options": {"A": "falsification", "B": "verification", "C": "proliferation", "D": "demarcation", "E": "negative heuristics"}, "answer": "D"}, {"id": 83, "question": "In the philosophy of this period, the motives of individualism, egoism, and utilitarianism associated with nascent capitalism are clearly heard:", "options": {"A": "Ancient Philosophy", "B": "Medieval Philosophy", "C": "Renaissance Philosophy", "D": "Philosophy of Modern Time", "E": "Philosophy of 20th century"}, "answer": "D"}, {"id": 84, "question": "In the schools of Indian philosophical thought what means action:", "options": {"A": "Karma", "B": "Dharma", "C": "Samsara", "D": "Reincarnation", "E": "Nirvana"}, "answer": "A"}, {"id": 85, "question": "In what period of philosophy was Man the image and likeness of God?:", "options": {"A": "Ancient Philosophy", "B": "Medieval Philosophy", "C": "Renaissance Philosophy", "D": "Philosophy of Modern Time", "E": "Philosophy of 20th century"}, "answer": "B"}, {"id": 86, "question": "Indicate the law of dialectics:", "options": {"A": "the law of gravity", "B": "Law of conservation of matter and energy", "C": "the law of the excluded middle", "D": "The law of unity and struggle of opposites", "E": "Law of Sufficient Reason"}, "answer": "D"}, {"id": 87, "question": "Internalism asserts that the factors influencing the development of science are related to:", "options": {"A": "External circumstances", "B": "Social environment", "C": "Economic situation", "D": "The inner nature of scientific knowledge", "E": "Political power"}, "answer": "D"}, {"id": 88, "question": "Introduced the concept of \"borderline situation\" into philosophy:", "options": {"A": "J.-P. Sartre", "B": "A.Camus", "C": "K.Jaspers", "D": "G.Marcel", "E": "M.Heidegger"}, "answer": "C"}, {"id": 89, "question": "Invisible, omnipresent law of nature, society, human behavior and thinking, the path:", "options": {"A": "Lee", "B": "Fa", "C": "Siao", "D": "Zhen", "E": "Tao"}, "answer": "E"}, {"id": 90, "question": "is something that can be said to exist:", "options": {"A": "Knowledge", "B": "Category", "C": "Being", "D": "Notion", "E": "Space"}, "answer": "C"}, {"id": 91, "question": "Is the belief in and worship of controlling power:", "options": {"A": "Religion", "B": "Culture", "C": "Science", "D": "Art", "E": "Game"}, "answer": "A"}, {"id": 92, "question": "Is the branch of philosophy that studies the nature of Being:", "options": {"A": "Ontology", "B": "Neoplatonism", "C": "Metaphysics", "D": "Dualism", "E": "Epistemology"}, "answer": "A"}, {"id": 93, "question": "Know thyself - said:", "options": {"A": "Confucius", "B": "Heraclitus", "C": "Protagoras", "D": "Parmenides", "E": "Socrates"}, "answer": "E"}, {"id": 94, "question": "Leonardo da Vinci was not only a great artist, but also:", "options": {"A": "A great inventor", "B": "A scientist", "C": "An engineer", "D": "A writer", "E": "All of the above"}, "answer": "E"}, {"id": 95, "question": "Lewis Mumford considers a strongly hierarchical, technocratic organization of society as…:", "options": {"A": "communication", "B": "megamachine", "C": "coordination", "D": "technicism", "E": "technopark"}, "answer": "B"}, {"id": 96, "question": "Maieutic method is elaborated by:", "options": {"A": "Socrates", "B": "Plato", "C": "Pythagoras", "D": "Thales", "E": "Anaximander"}, "answer": "A"}, {"id": 97, "question": "Maieutics is:", "options": {"A": "The ability to cleverly debate", "B": "The art of having a conversation, an argument", "C": "Socratic method of finding the truth", "D": "The ideal of physical and moral perfection", "E": "The beginning of being"}, "answer": "C"}, {"id": 98, "question": "Man is the measure of all things - believes:", "options": {"A": "Parmenides", "B": "Protagoras", "C": "Socrates", "D": "Democritus", "E": "Plato"}, "answer": "B"}, {"id": 99, "question": "Materialistic school in ancient Indian philosophy:", "options": {"A": "Charvaka", "B": "Buddhism", "C": "Yoga", "D": "Upanishads", "E": "Jainism"}, "answer": "A"}, {"id": 100, "question": "Meaning of Taoist principle \"Wu-wei\":", "options": {"A": "Non-resistance to evil", "B": "Action", "C": "Discipline and order in society", "D": "Non-action", "E": "Infinity of the Universe"}, "answer": "D"}, {"id": 101, "question": "Moral law: \"Act so that people and humanity have always been only a goal but not a means\" is called:", "options": {"A": "Kant's categorical imperative", "B": "Kant’s hypothetical imperative", "C": "Schweitzer’s ethics of reverence for life", "D": "Buddhist ethics of compassion", "E": "Feuerbach’s anthropological materialism"}, "answer": "A"}, {"id": 102, "question": "Outlined a system of laws mechanics and law universal gravity:", "options": {"A": "Francis Bacon", "B": "Gottfried Leibniz", "C": "Benedict Spinoza", "D": "Isaac Newton", "E": "Rene Descartes"}, "answer": "D"}, {"id": 103, "question": "Philosopher and theologian who put forward five proofs for the existence of God:", "options": {"A": "Aurelius Augustine", "B": "William of Ockham", "C": "Roger Bacon", "D": "Thomas Aquinas", "E": "Anselm of Canterbury"}, "answer": "D"}, {"id": 104, "question": "Philosopher, who claimed “God is dead and we killed him”:", "options": {"A": "Nietzsche", "B": "Kierkegaard", "C": "Marx", "D": "Freud", "E": "Schopenhauer"}, "answer": "A"}, {"id": 105, "question": "Philosopher, who said, that which does not kill me makes me stronger:", "options": {"A": "Friedrich Nietzsche", "B": "John Locke", "C": "Bertrand Russell", "D": "Thomas Aquinas", "E": "Blaise Pascal"}, "answer": "A"}, {"id": 106, "question": "Philosopher, who said, There is beauty in everything, but not everyone will see:", "options": {"A": "Confucius", "B": "Socrates", "C": "Thales", "D": "Democritus", "E": "Heraclitus"}, "answer": "A"}, {"id": 107, "question": "Philosopher, who was the first mentioned the term “philosophy”:", "options": {"A": "Pythagoras", "B": "Aristotle", "C": "Socrates", "D": "Plato", "E": "Epicures"}, "answer": "A"}, {"id": 108, "question": "Philosophers, close towards internalism are:", "options": {"A": "Descartes", "B": "Hegel", "C": "Popper", "D": "Husserl", "E": "All of the above"}, "answer": "E"}, {"id": 109, "question": "Philosophical direction, recognizing one beginning of the world:", "options": {"A": "dualism", "B": "Agnosticism", "C": "mechanism", "D": "Monism", "E": "Pluralism"}, "answer": "D"}, {"id": 110, "question": "Philosophical doctrine that denies the fundamental possibility of knowing the world:", "options": {"A": "skepticism", "B": "Agnosticism", "C": "sensationalism", "D": "Anthropologism", "E": "Atheism"}, "answer": "B"}, {"id": 111, "question": "Philosophical term of ethics:", "options": {"A": "moral", "B": "reflection", "C": "sense", "D": "imagination", "E": "perception"}, "answer": "A"}, {"id": 112, "question": "Plato's philosophical school is:", "options": {"A": "Academy", "B": "Lyceum", "C": "University", "D": "School", "E": "All are true"}, "answer": "A"}, {"id": 113, "question": "Position, that is based on an idea of the limited possibilities of science, and considering it as a force alien to the true nature of human:", "options": {"A": "scientism", "B": "pragmatism", "C": "panlogism", "D": "anthropocentrism", "E": "anti-scientism"}, "answer": "E"}, {"id": 114, "question": "Position, which is based on an idea of scientific knowledge as a high cultural value and sufficient condition for human orientation in the world:", "options": {"A": "voluntarism", "B": "scientism", "C": "anti-scientism", "D": "secularism", "E": "agnosticism"}, "answer": "B"}, {"id": 115, "question": "Positive sciences, according to positivism, are based on:", "options": {"A": "A priori knowledge", "B": "Deductive methods", "C": "Conclusions", "D": "Scientific facts of observation and experiment", "E": "Intuition"}, "answer": "D"}, {"id": 116, "question": "Protagoras is a … Philosopher:", "options": {"A": "Sophist", "B": "Spiritualist", "C": "Religious", "D": "Idealist", "E": "Analytic"}, "answer": "A"}, {"id": 117, "question": "Protagoras is the author of remark:", "options": {"A": "man is the measure of all things", "B": "man is a social animal", "C": "man is a bizarre creature", "D": "man is a superman", "E": "man is a political animal"}, "answer": "A"}, {"id": 118, "question": "Pythagoras was born on:", "options": {"A": "Samos", "B": "Athens", "C": "Iona", "D": "Serbia", "E": "Silesia"}, "answer": "A"}, {"id": 119, "question": "Questions like “What is the being?” is:", "options": {"A": "ontological", "B": "heliocentric", "C": "theoretical", "D": "teleological", "E": "theosophical"}, "answer": "A"}, {"id": 120, "question": "Rational knowledge includes:", "options": {"A": "concept, judgment, conclusion", "B": "analogy, hypothesis, ordering", "C": "induction, deduction generalization", "D": "intuition, reason, mind", "E": "sensation, perception, representation"}, "answer": "A"}, {"id": 121, "question": "Rationalism is the direction of philosophy, which is based on:", "options": {"A": "Method", "B": "Experience", "C": "Reason", "D": "Idea", "E": "Experiment"}, "answer": "C"}, {"id": 122, "question": "Rationalism is:", "options": {"A": "Doctrine that affirms that all knowledge is based on reason", "B": "A doctrine that affirms that all knowledge is based on experience", "C": "A view more in harmony with science than with traditional religion", "D": "New ideas in all areas of the culture", "E": "The mechanistic picture of the world"}, "answer": "A"}, {"id": 123, "question": "Recognition of the plurality of substance:", "options": {"A": "monism", "B": "pluralism", "C": "dualism", "D": "deism", "E": "rationalism"}, "answer": "B"}, {"id": 124, "question": "Recognition of two substances at the foundation of being:", "options": {"A": "Pluralism", "B": "Dualism", "C": "Monism", "D": "Conventionalism", "E": "Parallelism"}, "answer": "B"}, {"id": 125, "question": "Representative of the Milesian school:", "options": {"A": "Socrates", "B": "Democritus", "C": "Heraclitus", "D": "Diogenes", "E": "Thales"}, "answer": "E"}, {"id": 126, "question": "Representatives of marxism:", "options": {"A": "Popper, Mach, Avenarius", "B": "Scheler, Gehlen, Plessner", "C": "Sartre, Camus, Jaspers", "D": "Freud, Jung, Simmel", "E": "Marx, Engels, Plekhanov"}, "answer": "E"}, {"id": 127, "question": "Representatives of positivism:", "options": {"A": "Comte, Mach, Avenarius", "B": "Scheler, Gehlen, Plessner", "C": "Sartre, Camus, Jaspers", "D": "Freud, Jung, Simmel", "E": "Marx, Engels, Plekhanov"}, "answer": "A"}, {"id": 128, "question": "Representatives of post-positivism:", "options": {"A": "Hegel, Feuerbach, Marx", "B": "Popper, Kuhn, Lakatos", "C": "Kierkegaard, Sartre, Camus", "D": "Schleiermacher, Dilthey, Gadamer", "E": "Husserl, Heidegger, Jaspers"}, "answer": "B"}, {"id": 129, "question": "School of thought that questions the possibility of certainty in knowledge:", "options": {"A": "skepticism", "B": "pessimism", "C": "optimism", "D": "realism", "E": "nominalism"}, "answer": "A"}, {"id": 130, "question": "Scientism is:", "options": {"A": "Religious as worldview", "B": "Broad criticism of science", "C": "The doctrine of the laws of scientific knowledge", "D": "The declaration of science as the highest cultural value", "E": "The development of social inequality"}, "answer": "D"}, {"id": 131, "question": "Suffering and evil deal with:", "options": {"A": "ahimsa", "B": "nirvana", "C": "Brahmin", "D": "moksha", "E": "samsara"}, "answer": "E"}, {"id": 132, "question": "Teaching about God is:", "options": {"A": "Theology", "B": "Mythology", "C": "Metaphysics", "D": "History", "E": "Dialectics"}, "answer": "A"}, {"id": 133, "question": "Teaching about knowledge:", "options": {"A": "Ontology", "B": "Epistemology", "C": "Metaphysics", "D": "Axiology", "E": "Anthropology"}, "answer": "B"}, {"id": 134, "question": "Teachings about Being:", "options": {"A": "Epistemology", "B": "Axiology", "C": "Anthology", "D": "Anthropology", "E": "Ontology"}, "answer": "E"}, {"id": 135, "question": "Thales is … philosopher:", "options": {"A": "Milesian", "B": "Hebrew", "C": "Arab", "D": "German", "E": "Kazakh"}, "answer": "A"}, {"id": 136, "question": "The ability to create mental images or pictures is called…:", "options": {"A": "imagination", "B": "perception", "C": "reflection", "D": "consciousness", "E": "will"}, "answer": "A"}, {"id": 137, "question": "The ancient Greek philosopher Pythagoras stated:", "options": {"A": "All things are similar in number", "B": "War is the father of everything and the mother of everything", "C": "Know thyself", "D": "I know that I don't know anything", "E": "Everything flows, everything changes"}, "answer": "A"}, {"id": 138, "question": "The application of knowledge to reach practical goals in a reproducible way and also the product of such an endeavor:", "options": {"A": "technology", "B": "production", "C": "reproduction", "D": "quantification", "E": "qualification"}, "answer": "A"}, {"id": 139, "question": "The arche of things is apeiron, according to", "options": {"A": "Anaximander", "B": "Thales", "C": "Plato", "D": "Socrates", "E": "Abai"}, "answer": "A"}, {"id": 140, "question": "The author of 3 laws of dialectics:", "options": {"A": "G. Hegel", "B": "L. Feuerbach", "C": "I. Kant", "D": "J. Fichte", "E": "F. Schelling"}, "answer": "A"}, {"id": 141, "question": "The author of conception “The end of history”:", "options": {"A": "F. Fukuyama", "B": "A. Toynbee", "C": "M. Weber", "D": "O. Spengler", "E": "D. Bell"}, "answer": "A"}, {"id": 142, "question": "The author of the book \"The World as Will and Representation\", whose teaching became the source of the philosophy of life:", "options": {"A": "A. Schopenhauer", "B": "Z. Freud", "C": "F. Nietzsche", "D": "M. Scheler", "E": "A. Gehlen"}, "answer": "A"}, {"id": 143, "question": "The author of the Concept of Personal Knowledge is:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Michael Polanyi", "D": "Bertrand Russell", "E": "Isaak Newton"}, "answer": "C"}, {"id": 144, "question": "The author of the concepts of “Philosophical belief”, “Axial time”:", "options": {"A": "A. Camus", "B": "M. Heidegger", "C": "K. Jaspers", "D": "J.-P. Sartre", "E": "M. Buber"}, "answer": "C"}, {"id": 145, "question": "The author of the dictum: \"It is impossible to think of anything at all in the world, or indeed even beyond it, that could be considered good without limitation except a good will.\":", "options": {"A": "Augustine", "B": "Schopenhauer", "C": "Abay", "D": "Spinoza", "E": "Kant"}, "answer": "E"}, {"id": 146, "question": "The author of the expression: “Thought and Being are one and the same”:", "options": {"A": "Plato", "B": "Pythagoras", "C": "Heraclitus", "D": "Aristotle", "E": "Parmenides"}, "answer": "E"}, {"id": 147, "question": "The author of the famous treatise of the Middle Ages \"Canon of medical science\":", "options": {"A": "Al-Kindi", "B": "Ibn Sina", "C": "Al-Farabi", "D": "Ibn Khaldun", "E": "Al-Ghazali"}, "answer": "B"}, {"id": 148, "question": "The author of the saying \"Freedom is a conscious necessity\":", "options": {"A": "J. Locke", "B": "Fr. Bacon", "C": "B.Spinoza", "D": "G.F. Leibniz", "E": "R. Descartes"}, "answer": "C"}, {"id": 149, "question": "The author of the term \"paradigm\":", "options": {"A": "Thomas Kuhn", "B": "Erich Fromm", "C": "Sigmund Freud", "D": "Bertrand Russell", "E": "Imre Lakatos"}, "answer": "A"}, {"id": 150, "question": "The author of theory about One-Dimensional Man:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Herbert Marcuse", "D": "Albert Einstein", "E": "Isaak Newton"}, "answer": "C"}, {"id": 151, "question": "The basis for regulation of human behavior, according to legalism:", "options": {"A": "cruel laws", "B": "custom", "C": "tradition", "D": "ritual", "E": "morality"}, "answer": "A"}, {"id": 152, "question": "The belief that God is present in all things of nature:", "options": {"A": "Syncretism", "B": "Pantheism", "C": "Animism", "D": "Theology", "E": "Anthropology"}, "answer": "B"}, {"id": 153, "question": "The concept of an \"open society\" was developed by:", "options": {"A": "Popper", "B": "Plato", "C": "Hegel", "D": "Hobbes", "E": "Spinoza"}, "answer": "A"}, {"id": 154, "question": "The concept used in the logic and methodology of science to denote the process of establishing the truth of scientific statements as a result of their empirical experience:", "options": {"A": "Hypothesis", "B": "The concept", "C": "Verification", "D": "Demarcation", "E": "Falsification"}, "answer": "C"}, {"id": 155, "question": "The concepts of \"Ego\", \"It\", \"Super-Ego\" are basic in:", "options": {"A": "existentialism", "B": "psychoanalysis", "C": "personalism", "D": "machism", "E": "positivism"}, "answer": "B"}, {"id": 156, "question": "The direction of Aristotle's followers in Medieval Arab-Muslim Philosophy is:", "options": {"A": "Eastern peripateticism", "B": "Kalam", "C": "Ismailism", "D": "Ishraqism", "E": "Sufism"}, "answer": "A"}, {"id": 157, "question": "The English word \"ethics\" is derived from the ancient Greek word ēthikós, meaning:", "options": {"A": "relating to one's character", "B": "establishing moral order", "C": "elimination of evil", "D": "compliance with the moral rules", "E": "purposeful life"}, "answer": "A"}, {"id": 158, "question": "The ethical concept of Confucianism, identifying the positive qualities of a person:", "options": {"A": "a noble person", "B": "short man", "C": "an official", "D": "warlord", "E": "statesman"}, "answer": "A"}, {"id": 159, "question": "The expression “Everything I say is false” is…:", "options": {"A": "truth", "B": "sophism", "C": "wordplay", "D": "deception", "E": "error"}, "answer": "B"}, {"id": 160, "question": "The expression “One cannot enter into the same river even once” is…:", "options": {"A": "relativism", "B": "sophism", "C": "skepticism", "D": "pessimism", "E": "agnosticism"}, "answer": "A"}, {"id": 161, "question": "The famous words \"Language is the house of being\" belong to:", "options": {"A": "M. Heidegger", "B": "K. Jaspers", "C": "J.-P. Sartre", "D": "A. Camus", "E": "K. Popper"}, "answer": "A"}, {"id": 162, "question": "The first form of worldview:", "options": {"A": "Religion", "B": "Myth", "C": "Philosophy", "D": "Art", "E": "morality"}, "answer": "B"}, {"id": 163, "question": "The form of empirical cognition:", "options": {"A": "judgment", "B": "hypothesis", "C": "observation", "D": "syllogism", "E": "theory"}, "answer": "C"}, {"id": 164, "question": "The founder of rationalism, Rene Descartes, is known for his expression “Cogito ergo sum\", which means:", "options": {"A": "I sense, therefore I am", "B": "I see, therefore I am", "C": "I hear, therefore I am", "D": "I think, therefore I am", "E": "I perceive, therefore I am"}, "answer": "D"}, {"id": 165, "question": "The founder of the experimental mathematical methods of nature research:", "options": {"A": "Galileo Galilei", "B": "Nicolas Copernicus", "C": "Leonardo da Vinci", "D": "Thomas Moore", "E": "Niccolo Machiavelli"}, "answer": "A"}, {"id": 166, "question": "The founder of Thomism:", "options": {"A": "Aquinas", "B": "Protagoras", "C": "Anaximander", "D": "Socrates", "E": "Alexander"}, "answer": "A"}, {"id": 167, "question": "The idea of \"revaluation of all values\" came up with:", "options": {"A": "A. Schweitzer", "B": "I. Kant", "C": "F. Nietzsche", "D": "W. Windelband", "E": "G. Hegel"}, "answer": "C"}, {"id": 168, "question": "The individual subjective principle in Ancient Indian Philosophy is:", "options": {"A": "Brahman", "B": "Atman", "C": "Samsara", "D": "Karma", "E": "Nirvana"}, "answer": "B"}, {"id": 169, "question": "The influence of philosophy on XVII century Modern science is the creation of two most important philosophical and methodological concepts:", "options": {"A": "Modernism and Postmodernism", "B": "Rationalism and Empiricism", "C": "Sensualism and Empiricism", "D": "Personalism and Pragmatism", "E": "Existentialism and"}, "answer": "B"}, {"id": 170, "question": "The law of retribution is:", "options": {"A": "Brahman", "B": "Atman", "C": "Samsara", "D": "Karma", "E": "Nirvana"}, "answer": "D"}, {"id": 171, "question": "The main function of science is:", "options": {"A": "The search and production of new knowledge", "B": "Educational", "C": "Cultural", "D": "Technological", "E": "Social"}, "answer": "A"}, {"id": 172, "question": "The main principle of Abai's philosophy is:", "options": {"A": "Be fair", "B": "Be moral", "C": "Be human", "D": "Be good", "E": "Be beautiful"}, "answer": "C"}, {"id": 173, "question": "The main problem of existentialism:", "options": {"A": "The essence of man", "B": "Human faith", "C": "The existence of a person", "D": "The human mind", "E": "Human conscience"}, "answer": "C"}, {"id": 174, "question": "The main purpose of science is:", "options": {"A": "Make a discovery", "B": "To achieve the truth", "C": "Do experiments", "D": "Explore nature", "E": "Create theories"}, "answer": "B"}, {"id": 175, "question": "The main task of philosophy according to Bacon is the construction of:", "options": {"A": "A new scientific method", "B": "A new experiment", "C": "A new argument", "D": "A new idea", "E": "A new reason"}, "answer": "A"}, {"id": 176, "question": "The main task of philosophy is the construction of a new method of science, believed:", "options": {"A": "Socrates", "B": "Rene Descartes", "C": "Francis Bacon", "D": "Georg Hegel", "E": "Aristotle"}, "answer": "C"}, {"id": 177, "question": "The measurement of something by stating how much there is of it, an amount or number of something is:", "options": {"A": "quantity", "B": "quality", "C": "property", "D": "measure", "E": "space"}, "answer": "A"}, {"id": 178, "question": "The Muslim Renaissance occurred:", "options": {"A": "Before the European Renaissance", "B": "During the European Renaissance", "C": "After the European Renaissance", "D": "In Modern times", "E": "In the Age of Enlightenment"}, "answer": "A"}, {"id": 179, "question": "The negation of the causality principle:", "options": {"A": "determinism", "B": "agnosticism", "C": "indeterminism", "D": "fatalism", "E": "idealism"}, "answer": "C"}, {"id": 180, "question": "The normative ethical position that moral agents ought to act in their own self-interest:", "options": {"A": "ethical egoism", "B": "rational egoism", "C": "psychological egoism", "D": "immorality", "E": "amorality"}, "answer": "A"}, {"id": 181, "question": "The philosopher who formulated 4 methodological rules:", "options": {"A": "Socrates", "B": "Rene Descartes", "C": "Francis Bacon", "D": "Georg Hegel", "E": "Aristotle"}, "answer": "B"}, {"id": 182, "question": "The philosopher who introduced the concepts of “normal science” and “paradigm shift”:", "options": {"A": "I. Lakatos", "B": "P. Feyerabend", "C": "A. Comte", "D": "T. Kuhn", "E": "L. Wittgenstein"}, "answer": "D"}, {"id": 183, "question": "The philosophy of technology explores:", "options": {"A": "The phenomenon of technology in general", "B": "The place of technology in social development", "C": "Wide historical perspective of technology", "D": "All of the above", "E": "None of the above"}, "answer": "D"}, {"id": 184, "question": "The practical value of science is as follows:", "options": {"A": "Do experiments", "B": "Explore nature", "C": "Make a discovery", "D": "To bring benefits to humanity", "E": "Create theories"}, "answer": "D"}, {"id": 185, "question": "The prerequisites of the experimental method were obtained in the era of:", "options": {"A": "Antiquity", "B": "the Middle Ages", "C": "Renaissance", "D": "Modern Times", "E": "Postmodern"}, "answer": "C"}, {"id": 186, "question": "The principle of falsification was introduced into scientific circulation:", "options": {"A": "J. Derrida", "B": "A. Camus", "C": "K. Jaspers", "D": "T. Kuhn", "E": "K. Popper"}, "answer": "E"}, {"id": 187, "question": "The purification and purgation of emotions through dramatic art, or any extreme emotional state that results in renewal and restoration:", "options": {"A": "mimesis", "B": "catalepsy", "C": "ataraxy", "D": "catharsis", "E": "phronesis"}, "answer": "D"}, {"id": 188, "question": "The reflection of separate properties of the objects of real world with the help of our sense organs is:", "options": {"A": "sense", "B": "affect", "C": "will", "D": "imagination", "E": "perception"}, "answer": "D"}, {"id": 189, "question": "The science about future is known as:", "options": {"A": "Futurology", "B": "Sociology", "C": "Ontology", "D": "Cosmology", "E": "Axiology"}, "answer": "A"}, {"id": 190, "question": "The science of beauty:", "options": {"A": "ethics", "B": "aesthetics", "C": "logic", "D": "ontology", "E": "axiology"}, "answer": "B"}, {"id": 191, "question": "The science of moral is known as:", "options": {"A": "Ethics", "B": "Futurology", "C": "Sociology", "D": "Ontology", "E": "Cosmology"}, "answer": "A"}, {"id": 192, "question": "The science of values is known as:", "options": {"A": "Cosmology", "B": "Futurology", "C": "Sociology", "D": "Ontology", "E": "Axiology"}, "answer": "E"}, {"id": 193, "question": "The science on forms, laws and ways of thinking:", "options": {"A": "logistic", "B": "axiology", "C": "ontology", "D": "epistemology", "E": "logic"}, "answer": "E"}, {"id": 194, "question": "The set of beliefs, values, technical means adopted by the scientific community and providing a scientific tradition:", "options": {"A": "scientific paradigms", "B": "scientific theories", "C": "scientific schemes", "D": "Scientific revolutions", "E": "scientific experiments"}, "answer": "A"}, {"id": 195, "question": "The sphere of philosophical knowledge about human being:", "options": {"A": "Anthropology", "B": "Epistemology", "C": "Axiology", "D": "Ontology", "E": "Logic"}, "answer": "A"}, {"id": 196, "question": "The sphere of philosophical knowledge directed to the study of the fundamental foundations of human existence:", "options": {"A": "Philosophical anthropology", "B": "Epistemology", "C": "Axiology", "D": "Ontology", "E": "Logic"}, "answer": "A"}, {"id": 197, "question": "The standard of something when compared to other things like it, how good or bad something is:", "options": {"A": "quality", "B": "quantity", "C": "property", "D": "measure", "E": "space"}, "answer": "A"}, {"id": 198, "question": "The statement \"If existence really precedes essence, then a person is responsible for what he is\" characterizes:", "options": {"A": "existentialism", "B": "psychoanalysis", "C": "philosophy of life", "D": "Philosophical anthropology", "E": "Pragmatism"}, "answer": "A"}, {"id": 199, "question": "The statement \"If existence really precedes essence, then a person is responsible for what he is\" characterizes:", "options": {"A": "existentialism", "B": "psychoanalysis", "C": "philosophy of life", "D": "Philosophical anthropology", "E": "Pragmatism"}, "answer": "A"}, {"id": 200, "question": "The study concerned about the nature and grounds of knowledge and its validity is:", "options": {"A": "Epistemology", "B": "Metaphysics", "C": "Political Science", "D": "Natural Science", "E": "Axiology"}, "answer": "A"}, {"id": 201, "question": "The study of ethical issues of medical policy and practice, environment, well-being and public health, arising from advances in biology, medicine and technology:", "options": {"A": "bioethics", "B": "medical humanitarianism", "C": "normative ethics", "D": "applied ethics", "E": "ethics of care"}, "answer": "A"}, {"id": 202, "question": "The study of goodness, right and wrong, justice, beauty, moral and virtue is:", "options": {"A": "Ethics", "B": "Empiricists", "C": "Eidos", "D": "Epistemology", "E": "Heuristics"}, "answer": "A"}, {"id": 203, "question": "The subject of the study of social philosophy:", "options": {"A": "Nature", "B": "Cognition", "C": "Genesis", "D": "Consciousness", "E": "Society"}, "answer": "E"}, {"id": 204, "question": "The term \"axial time\" was proposed by:", "options": {"A": "K. Jaspers", "B": "K. Popper", "C": "A. Camus", "D": "J. Derrida", "E": "M. Heidegger"}, "answer": "A"}, {"id": 205, "question": "The term \"demarcation\" between science and psevdosciense means:", "options": {"A": "Separation of religious knowledge from mythological knowledge", "B": "Separation of scientific knowledge from non-scientific knowledge", "C": "Separation of the conscious level from the unconscious level", "D": "Separation of rational knowledge from irrational knowledge", "E": "Separation of empirical knowledge from rational knowledge"}, "answer": "B"}, {"id": 206, "question": "The thinkers of Milesian School were the thinkers of:", "options": {"A": "Nature", "B": "metaphysics", "C": "religion", "D": "faith", "E": "truth"}, "answer": "A"}, {"id": 207, "question": "The third law of dialectics:", "options": {"A": "the law of gravity", "B": "Law of conservation of matter and energy", "C": "The law of the excluded middle", "D": "Law of sufficient reason", "E": "The law of negation of negation"}, "answer": "E"}, {"id": 208, "question": "The thought that \"ethics is nothing else than reverence for life\" belongs to:", "options": {"A": "Albert Schweitzer", "B": "Leo Tolstoy", "C": "Mahatma Gandhi", "D": "Korkyt Ata", "E": "Deni Diderot"}, "answer": "A"}, {"id": 209, "question": "The value aspects expresses:", "options": {"A": "Ontology", "B": "Epistemology", "C": "Anthropology", "D": "Futurology", "E": "Axiology"}, "answer": "E"}, {"id": 210, "question": "The will to power is the central category of:", "options": {"A": "Popper", "B": "Freud", "C": "Yung", "D": "Marx", "E": "Nietzsche"}, "answer": "E"}, {"id": 211, "question": "The work \"The Structure of Scientific Revolutions\" was written by postpositivist:", "options": {"A": "K. Popper", "B": "T. Adorno", "C": "J. Habermas", "D": "T. Kuhn", "E": "L. Wittgenstein"}, "answer": "D"}, {"id": 212, "question": "The ‘Demonism of Technology’ means:", "options": {"A": "Deification and worship of technology", "B": "The relationship between religion and technology", "C": "Technical foundations of religious beliefs", "D": "Religious grounds of technology", "E": "The unpredictable destructive consequences of its use for man, society and all mankind, its harmful effects on nature"}, "answer": "E"}, {"id": 213, "question": "Thinker who reasoned that utility is equal to happiness and the ultimate goal is to find \"the greatest amount of good for the greatest number of people\":", "options": {"A": "J. Bentham", "B": "J.S. Mill", "C": "I. Kant", "D": "Ch.S. Peirce", "E": "J. Habermas"}, "answer": "A"}, {"id": 214, "question": "Thinker, who linked the origin of capitalism with the protestant ethics:", "options": {"A": "A. Comte", "B": "M. Weber", "C": "T. Kuhn", "D": "M. Foucault", "E": "I. Kant"}, "answer": "B"}, {"id": 215, "question": "This function is that philosophy develops the basic approach of cognition of the reality:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "B"}, {"id": 216, "question": "This function of philosophy asserts the consciously normative attitude of a person to himself and to other people:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "C"}, {"id": 217, "question": "This function of philosophy brings up certain interests and ideals in a person, which determine the stimulus of his behavior and the achievement of his goals:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "E"}, {"id": 218, "question": "This function of philosophy is to develop a perspective position:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "A"}, {"id": 219, "question": "This function of philosophy teaches us to recognize the values of the surrounding world:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "D"}, {"id": 220, "question": "This philosopher and scientist told about the hypertrophied development of science:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Isaak Newton", "D": "Bertrand Russell", "E": "Gottfried Leibniz"}, "answer": "D"}, {"id": 221, "question": "This philosophy calls for enduring what cannot be changed and for maintaining abstinence from temptation:", "options": {"A": "stoicism", "B": "epicureanism", "C": "quietism", "D": "quakerism", "E": "providentialism"}, "answer": "A"}, {"id": 222, "question": "To the question: \"What is difficult?\" Thales replied:", "options": {"A": "to know God", "B": "to know thyself", "C": "to give advices to others", "D": "to know the essence of things", "E": "to overcome the need"}, "answer": "B"}, {"id": 223, "question": "Transition from the general to the specific knowledge:", "options": {"A": "induction", "B": "analysis", "C": "deduction", "D": "abstracting", "E": "synthesis"}, "answer": "C"}, {"id": 224, "question": "Two main parts of philosophy:", "options": {"A": "Sophistry, eclecticism, dogmatism", "B": "Monism, dualism, pluralism", "C": "Sociology, political science, cultural studies", "D": "Ontology, Epistemology", "E": "Mythology, religion, philosophy"}, "answer": "D"}, {"id": 225, "question": "Understanding of facts, information, descriptions, which is acquired through:", "options": {"A": "Experience", "B": "Knowledge", "C": "Stereotype", "D": "Work", "E": "Misunderstanding"}, "answer": "B"}, {"id": 226, "question": "View that after the death the human beings live again in other forms:", "options": {"A": "Reincarnation", "B": "Fetishism", "C": "Animism", "D": "Religion", "E": "Syncretism"}, "answer": "A"}, {"id": 227, "question": "Western attitude towards Middle Eastern, Asian and African societies that characterizes these societies as static and undeveloped:", "options": {"A": "medievalism", "B": "westernism", "C": "orientalism", "D": "occidentalism", "E": "medievistics"}, "answer": "C"}, {"id": 228, "question": "What does Buddha mean in Sanskrit?:", "options": {"A": "Dark", "B": "Smart", "C": "Enlightened", "D": "Universal", "E": "Statue"}, "answer": "C"}, {"id": 229, "question": "What does humanism mean?", "options": {"A": "philanthropy", "B": "love for god", "C": "love for knowledge", "D": "love of wisdom", "E": "love for truth"}, "answer": "A"}, {"id": 230, "question": "What does Maya mean?:", "options": {"A": "Illusion", "B": "rebirth of souls", "C": "fate", "D": "action", "E": "practice"}, "answer": "A"}, {"id": 231, "question": "What does the Greek word “Logos” mean?:", "options": {"A": "science", "B": "goal", "C": "religion", "D": "idea", "E": "subject"}, "answer": "A"}, {"id": 232, "question": "What is common between myth, religion and philosophy:", "options": {"A": "reflection", "B": "world outlook", "C": "scientific approach", "D": "rationalism", "E": "agnosticism"}, "answer": "B"}, {"id": 233, "question": "What is logic?:", "options": {"A": "Study of reasoning and argument", "B": "study of nature", "C": "study of cognition", "D": "study of morality", "E": "methaphysics"}, "answer": "A"}, {"id": 234, "question": "What is Philosophy?:", "options": {"A": "The study that seeks to understand the mysteries of existence and reality", "B": "the study of nature", "C": "the study of man", "D": "the study of cognition", "E": "the study of stars"}, "answer": "A"}, {"id": 235, "question": "What is the main term of Hegel?:", "options": {"A": "The Brightness", "B": "The Absolute Spirit", "C": "The Ultimate", "D": "The Boundless", "E": "The Perfection"}, "answer": "B"}, {"id": 236, "question": "What is the meaning of the term Philosophy?:", "options": {"A": "Love of wisdom", "B": "Love of Idea", "C": "Love of thinking", "D": "Love of Science", "E": "Love of Truth"}, "answer": "A"}, {"id": 237, "question": "What is the principle of \"Siao\":", "options": {"A": "philanthropy", "B": "etiquette", "C": "energy", "D": "servility", "E": "Respect for elders"}, "answer": "E"}, {"id": 238, "question": "What is the translation of the word “religio” from Latin?:", "options": {"A": "worshiping", "B": "person", "C": "faith, cult", "D": "bind, connect", "E": "idol"}, "answer": "D"}, {"id": 239, "question": "What philosophical direction “Space and time are forms of our perception” belong to:", "options": {"A": "Materialism", "B": "Objective idealism", "C": "Subjective idealism", "D": "dialectical materialism", "E": "mechanistic materialism"}, "answer": "C"}, {"id": 240, "question": "What principle is opposite to verification?", "options": {"A": "falsification", "B": "verification", "C": "stimulation", "D": "regeneration", "E": "generalization"}, "answer": "A"}, {"id": 241, "question": "Which is the branch of philosophy that studies issues concerning art and beauty?:", "options": {"A": "Aesthetics", "B": "Epistemology", "C": "Logic", "D": "Metaphysics", "E": "Moral"}, "answer": "A"}, {"id": 242, "question": "Which Pre-Socratic philosopher claimed everything was made of atoms?:", "options": {"A": "Parmenides", "B": "Thales", "C": "Pythagoras", "D": "Democritus", "E": "Heraclitus"}, "answer": "D"}, {"id": 243, "question": "Who advocated theory of atoms:", "options": {"A": "Democritus", "B": "Thales", "C": "Plato", "D": "Aristotle", "E": "Alexander"}, "answer": "A"}, {"id": 244, "question": "Who coined the term \"Philosophy\"?:", "options": {"A": "Pythagoras", "B": "Protagoras", "C": "Plato", "D": "Aristotle", "E": "Socrates"}, "answer": "A"}, {"id": 245, "question": "Who discovered 5 causes of God?:", "options": {"A": "St. Thomas Aquinas", "B": "Plato", "C": "Phenomenon", "D": "Socrates", "E": "Richard Rorty"}, "answer": "A"}, {"id": 246, "question": "Who distinguished world of ideas and physical world?", "options": {"A": "Plato", "B": "Aristotle", "C": "Descartes", "D": "Richard Rorty", "E": "Romans"}, "answer": "A"}, {"id": 247, "question": "Who has been looking for “Zheruyyk” (the promised land) all his life:", "options": {"A": "Shalkiiz-zhyrau", "B": "Asan-kaigy", "C": "Bukhar-zhyrau", "D": "Dospambet-zhyrau", "E": "Akan-seri"}, "answer": "B"}, {"id": 248, "question": "Who introduced the concept of \"archetype\" into psychoanalysis:", "options": {"A": "E. Fromm", "B": "K. Jung", "C": "Z. Freud", "D": "F. Nietzsche", "E": "A. Schopenhauer"}, "answer": "B"}, {"id": 249, "question": "Who invented the dialectic method of finding truth through conversation:", "options": {"A": "Socrates", "B": "Plato", "C": "Aristotle", "D": "Descartes", "E": "Hellenistic"}, "answer": "A"}, {"id": 250, "question": "Who is a philosopher?:", "options": {"A": "Lover and pursuer of wisdom", "B": "Someone who studies the stars and planets", "C": "person primarily interested in the truth about moral matters", "D": "A clever and tricky arguer", "E": "A person that attempt to resolve any questions"}, "answer": "A"}, {"id": 251, "question": "Who is philosopher - encyclopedist?:", "options": {"A": "Aristotle", "B": "Pythagoras", "C": "Plato", "D": "Socrates", "E": "Democritus"}, "answer": "A"}, {"id": 252, "question": "Who is the author of the doctrine of Maieutics?:", "options": {"A": "Socrates", "B": "Plato", "C": "Thales", "D": "Descartes", "E": "Alexander"}, "answer": "A"}, {"id": 253, "question": "Who is the founder of objective idealism?:", "options": {"A": "Plato", "B": "Aristotele", "C": "Thales", "D": "Abai", "E": "Democritus"}, "answer": "A"}, {"id": 254, "question": "Who said \"Two things always fill the soul with new and ever stronger wonder - this is the Starry Sky above Me and the Moral Law in Me\":", "options": {"A": "I.Kant", "B": "Socrates", "C": "Aristotle", "D": "Plato", "E": "Abai"}, "answer": "A"}, {"id": 255, "question": "Who said Number is the essence and basis of all things?:", "options": {"A": "Pythagoras", "B": "Descartes", "C": "Thales", "D": "Socrates", "E": "Plato"}, "answer": "A"}, {"id": 256, "question": "Who said «Philosophy begins with wonder»:", "options": {"A": "Aristotle", "B": "Thales", "C": "Plato", "D": "Socrates", "E": "Descartes"}, "answer": "A"}, {"id": 257, "question": "Who said “Educating the mind without educating the heart is no education at all”:", "options": {"A": "Aristotle", "B": "Thales", "C": "Plato", "D": "Descartes", "E": "Socrates"}, "answer": "A"}, {"id": 258, "question": "Who said: “Religion is the opium of the masses”?:", "options": {"A": "Marx", "B": "Kierkegaard", "C": "Nietzsche", "D": "Freud", "E": "Schopenhauer"}, "answer": "A"}, {"id": 259, "question": "Who was called the \"Second Teacher\" in world philosophy?:", "options": {"A": "Al-Ghazali", "B": "Al-Farabi", "C": "Al-Biruni", "D": "Al-Khwarizmi", "E": "Al-Kindi"}, "answer": "B"}, {"id": 260, "question": "Who was the first Milesian materialistic philosopher?:", "options": {"A": "Thales", "B": "Heraclitus", "C": "Anaximander", "D": "Socrates", "E": "Plato"}, "answer": "A"}, {"id": 261, "question": "Who was the first philosopher - mathematician?:", "options": {"A": "Pythagoras", "B": "Leibnitz", "C": "Aristotle", "D": "Plato", "E": "Socrates"}, "answer": "A"}, {"id": 262, "question": "«The highest form of wisdom is kindness» was written in:", "options": {"A": "Talmud", "B": "Old Testament", "C": "New Testament", "D": "Veda", "E": "Bible"}, "answer": "A"}, {"id": 263, "question": "“Cognition is the recollection of the ideas that soul had once beheld”, affirms:", "options": {"A": "Epicurus", "B": "Aristotle", "C": "Plato", "D": "Socrates", "E": "Pythagoras"}, "answer": "C"}, {"id": 264, "question": "“Don’t harm the living, sentient beings” is the commandment of:", "options": {"A": "ahimsa", "B": "moksha", "C": "samsara", "D": "karma", "E": "nirvana"}, "answer": "A"}, {"id": 265, "question": "“I do not agree with what you have to say, but I’ll defend to the death your right to say it”, said:", "options": {"A": "Voltaire", "B": "Abai", "C": "Aristotle", "D": "Socrates", "E": "Cicero"}, "answer": "A"}, {"id": 266, "question": "“Knowledge comes only or primarily from sensory experience”:", "options": {"A": "skepticism", "B": "rationalism", "C": "agnosticism", "D": "phenomenology", "E": "empiricism"}, "answer": "E"}, {"id": 267, "question": "“Motion is unthinkable” – assumed:", "options": {"A": "Thales", "B": "Heraclitus of Ephesus", "C": "Zeno of Elea", "D": "Diogenes of Sinope", "E": "Pythagoras of Samos"}, "answer": "C"}, {"id": 268, "question": "“Nothing is morally right or wrong because there are no moral features in this world; thus, no moral judgments are true”:", "options": {"A": "moral nihilism", "B": "moral relativism", "C": "moral objectivism", "D": "moral ignorance", "E": "moral eliminativism"}, "answer": "A"}, {"id": 269, "question": "\"All sciences are divided into physics and stamp collecting\", - said:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Immanuel Kant", "D": "Albert Einstein", "E": "Isaac Newton"}, "answer": "A"}, {"id": 270, "question": "\"Everything flows\", there is nothing constant in the universe, considered:", "options": {"A": "Thales", "B": "Anaximander", "C": "Democritus", "D": "Heraclitus", "E": "Protagoras"}, "answer": "D"}, {"id": 271, "question": "\"I know that I don't know anything, but others don't know that either\" believed:", "options": {"A": "Plato", "B": "Seneca", "C": "Epicurus", "D": "Socrates", "E": "Protagoras"}, "answer": "D"}, {"id": 272, "question": "\"I know that I don't know anything, but others don't know that either.\" believed:", "options": {"A": "Plato", "B": "Seneca", "C": "Epicurus", "D": "Socrates", "E": "Protagoras"}, "answer": "D"}, {"id": 273, "question": "\"Man is the measure of all things,\" - says:", "options": {"A": "Parmenides", "B": "Protagoras", "C": "Socrates", "D": "Democritus", "E": "Plato"}, "answer": "B"}, {"id": 274, "question": "\"Man is the measure of all things,\" - says:", "options": {"A": "Parmenides", "B": "Protagoras", "C": "Socrates", "D": "Democritus", "E": "Plato"}, "answer": "B"}, {"id": 275, "question": "\"The book of nature is written in the language of mathematics,“ - argued:", "options": {"A": "Copernicus", "B": "Galileo", "C": "Bacon", "D": "Descartes", "E": "Newton"}, "answer": "B"}, {"id": 276, "question": "\"There is as much truth in every knowledge as there is mathematics”, - believed:", "options": {"A": "Copernicus", "B": "Galileo", "C": "Kant", "D": "Descartes", "E": "Newton"}, "answer": "C"}, {"id": 277, "question": "\"Who said \"\"I know that I know nothing, but others do not know this either ...\"\".", "options": {"A": "Socrates", "B": "Plato", "C": "Pythogoras", "D": "thales", "E": "Abai"}, "answer": "A"}, {"id": 278, "question": "A class of meta-ethical theories in which all members entail that no one has any moral knowledge, more over it is impossible:", "options": {"A": "moral skepticism", "B": "moral nihilism", "C": "moral absenteeism", "D": "ethical realism", "E": "agnosticism"}, "answer": "A"}, {"id": 279, "question": "A person who behaves in a way that is acceptable by most people and who avoids doing things that could be considered different or unusual:", "options": {"A": "conformist", "B": "follower", "C": "supporter", "D": "proponent", "E": "adherent"}, "answer": "A"}, {"id": 280, "question": "A person who behaves in a way that is acceptable by most people and who avoids doing things that could be considered different or unusual:", "options": {"A": "proponent", "B": "follower", "C": "supporter", "D": "conformist", "E": "adherent"}, "answer": "D"}, {"id": 281, "question": "A person who does not behave the way most people behave:", "options": {"A": "nonconformist", "B": "antagonist", "C": "remonstrant", "D": "opponent", "E": "adversary"}, "answer": "A"}, {"id": 282, "question": "A person who does not behave the way most people behave:", "options": {"A": "antagonist", "B": "nonconformist", "C": "remonstrant", "D": "opponent", "E": "adversary"}, "answer": "B"}, {"id": 283, "question": "A philosophical concept that denies the possibility of a reasonable knowledge of reality:", "options": {"A": "Irrationalism", "B": "Existentialism", "C": "Utilitarianism", "D": "Personalism", "E": "Pragmatism"}, "answer": "A"}, {"id": 284, "question": "A philosophical method based on decomposition phenomenon into its constituent parts and sides:", "options": {"A": "Analysis", "B": "Synthesis", "C": "Dialectic", "D": "Metaphysics", "E": "Eclecticism"}, "answer": "A"}, {"id": 285, "question": "A philosophical method based on the consideration of things, and processes from two opposite points of view:", "options": {"A": "Analysis", "B": "Synthesis", "C": "Dialectics", "D": "Metaphysics", "E": "Eclecticism"}, "answer": "C"}, {"id": 286, "question": "A philosophical method based on the principles of interpretation of any texts or systems of concepts:", "options": {"A": "Maieutics", "B": "Dialectics", "C": "Hermeneutics", "D": "Eclectic", "E": "Sophistry"}, "answer": "C"}, {"id": 287, "question": "A principle is opposite to verification:", "options": {"A": "falsification", "B": "verification", "C": "stimulation", "D": "regeneration", "E": "generalization"}, "answer": "A"}, {"id": 288, "question": "A Renaissance thinker who believed that a ruler should combine the qualities of a lion and a fox:", "options": {"A": "Campanella", "B": "More", "C": "Petrarch", "D": "Bruno", "E": "Machiavelli"}, "answer": "E"}, {"id": 289, "question": "A thinker who claims that a philosopher should be at the head of the state:", "options": {"A": "Aristotle", "B": "Democritus", "C": "Heraclitus", "D": "Epicurus", "E": "Plato"}, "answer": "E"}, {"id": 290, "question": "A thinker who claims that a philosopher should be at the head of the state:", "options": {"A": "Aristotle", "B": "Democritus", "C": "Heraclitus", "D": "Plato", "E": "Epicurus"}, "answer": "D"}, {"id": 291, "question": "A thinker whose ideas about man reflect the following judgment: \"Man is a wolf to man\":", "options": {"A": "Hobbes", "B": "Cusa", "C": "Pascal", "D": "Hegel", "E": "Kant"}, "answer": "A"}, {"id": 292, "question": "A thinker whose ideas about man reflect the following judgment: \"Man is a wolf to man\":", "options": {"A": "Spinosa", "B": "Hobbes", "C": "Pascal", "D": "Hegel", "E": "Kant"}, "answer": "B"}, {"id": 293, "question": "A trait or quality that is deemed morally good and thus is valued as the basis of good moral being:", "options": {"A": "virtue", "B": "dignity", "C": "charity", "D": "prudence", "E": "justice"}, "answer": "A"}, {"id": 294, "question": "According to -------, all phenomena in the world are planned in advance and the possibility of chance is rejected:", "options": {"A": "fatalism", "B": "determinism", "C": "formalism", "D": "indeterminism", "E": "providentialism"}, "answer": "A"}, {"id": 295, "question": "According to .. all phenomena in the world are planned in advance and the possibility of change is rejected:", "options": {"A": "fatalism", "B": "determinism", "C": "formalism", "D": "indeterminism", "E": "providentialism"}, "answer": "A"}, {"id": 296, "question": "According to A. Camus, way out of absurdity situation:", "options": {"A": "religious faith", "B": "suicide", "C": "revolt", "D": "reconciliation with absurdity", "E": "religious struggle"}, "answer": "C"}, {"id": 297, "question": "According to Al Farabi, the ideal of social organization:", "options": {"A": "city of freedom", "B": "city of panic", "C": "city of the sun", "D": "city of ambition", "E": "virtuous city"}, "answer": "E"}, {"id": 298, "question": "According to al-Farabi, the ideal of society:", "options": {"A": "city of the sun", "B": "city of panic", "C": "virtuous city", "D": "city of ambition", "E": "city of freedom and collectivity"}, "answer": "C"}, {"id": 299, "question": "According to Nietzsche, there are no transcendental ethics or values for us to use, so:", "options": {"A": "We must live in transcendental world", "B": "We must destroy everything", "C": "We must live its imagine form", "D": "We must live in absurdity", "E": "We must create our own values"}, "answer": "E"}, {"id": 300, "question": "According to Parmenides, being is:", "options": {"A": "eternal, invariable, united", "B": "ideal, eternal, multiple", "C": "the unity of the spiritual and material", "D": "material, variable, ultimate", "E": "invariable, plural"}, "answer": "A"}, {"id": 301, "question": "According to Pythagoras \"All things are the essence of", "options": {"A": "a number", "B": "the cause", "C": "a reality", "D": "an idea", "E": "an illusion"}, "answer": "A"}, {"id": 302, "question": "Adam Bol - the principle first proclaimed:", "options": {"A": "A. Baitursynov", "B": "Sh. Kudaiberdiev", "C": "Sh. Ualikhanov", "D": "A. Bukeikhanov", "E": "A. Kunanbaev"}, "answer": "E"}, {"id": 303, "question": "Adam Bol - the principle first proclaimed:", "options": {"A": "A. Baitursynov", "B": "Sh. Kudaiberdiev", "C": "Sh. Ualikhanov", "D": "A. Bukeikhanov", "E": "A. Kunanbaev"}, "answer": "E"}, {"id": 304, "question": "An ancient philosopher who believed that the material world consists of atoms:", "options": {"A": "Aristotle", "B": "Pyrrho", "C": "Zeno", "D": "Democritus", "E": "Heraclitus"}, "answer": "D"}, {"id": 305, "question": "An ancient philosopher who believed that the material world consists of atoms:", "options": {"A": "Aristotle", "B": "Pyrrho", "C": "Zeno", "D": "Democritus", "E": "Heraclitus"}, "answer": "D"}, {"id": 306, "question": "An outstanding representative of medieval scholasticism:", "options": {"A": "Al-Kindi", "B": "Aurelius Augustine", "C": "Thomas Aquinas", "D": "Ibn Sina", "E": "Al-Farabi"}, "answer": "C"}, {"id": 307, "question": "Anaximander, a philosopher came after", "options": {"A": "Thales", "B": "Socrates", "C": "Pythogoras", "D": "descartes", "E": "Richard Rorty"}, "answer": "A"}, {"id": 308, "question": "Ancient Greek philosophers, who took money for teaching wisdom:", "options": {"A": "atomists", "B": "representatives of Peripatetic school", "C": "sophists", "D": "Socratics", "E": "all Ancient Greek thinkers"}, "answer": "C"}, {"id": 309, "question": "Ancient philosopher, who recognized water, earth, fire and air as a system of world’s eternal elements and forces:", "options": {"A": "Epicurus", "B": "Empedocles", "C": "Anaximenes", "D": "Anaximander", "E": "Heraclitus"}, "answer": "B"}, {"id": 310, "question": "Anthropocentrism and humanism are inherent in the epoch of:", "options": {"A": "Ancient Philosophy", "B": "Medieval Philosophy", "C": "Renaissance Philosophy", "D": "Philosophy of Modern Time", "E": "Philosophy of 20th century"}, "answer": "C"}, {"id": 311, "question": "Any change, transformation, and process is:", "options": {"A": "motion", "B": "evolution", "C": "involution", "D": "development", "E": "progress"}, "answer": "A"}, {"id": 312, "question": "Apeiron is", "options": {"A": "single, eternal, indefinite", "B": "formal logic", "C": "eidos", "D": "hyle", "E": "form"}, "answer": "A"}, {"id": 313, "question": "Aristotle divided the Sciences into three group:", "options": {"A": "Theoretical, practical and rational", "B": "Theoretical, practical and cultural", "C": "Theoretical, practical and ethical", "D": "Theoretical, practical and empirical", "E": "Theoretical, practical and poetic"}, "answer": "E"}, {"id": 314, "question": "Author by the famous book \"The Selfish Gene\"(1976):", "options": {"A": "Ernest Rutherford", "B": "Immanuel Kant", "C": "Richard Dawkins", "D": "Albert Einstein", "E": "Isaac Newton"}, "answer": "C"}, {"id": 315, "question": "Author by the famous “Mathematical Principles of Natural Philosophy”:", "options": {"A": "Francis Bacon", "B": "Gottfried Leibniz", "C": "Isaac Newton", "D": "Benedict Spinoza", "E": "Rene Descartes"}, "answer": "C"}, {"id": 316, "question": "Author of \"Apology of Socrates\" is", "options": {"A": "Plato", "B": "Pythogoras", "C": "Robert Nozick", "D": "Richard Rorty", "E": "Democritus"}, "answer": "A"}, {"id": 317, "question": "Author of 10 Categories of logics", "options": {"A": "Aristotele", "B": "Plato", "C": "Thales", "D": "Decard", "E": "Democritus"}, "answer": "A"}, {"id": 318, "question": "Author of concept of the scientific knowledge model:", "options": {"A": "I. Lakatos", "B": "G. Leibniz", "C": "J. Fichte", "D": "G. Hegel", "E": "A. Schopenhauer"}, "answer": "A"}, {"id": 319, "question": "Author of idea of ideal state", "options": {"A": "Plato", "B": "Protagoras", "C": "Anaximander", "D": "Socrates", "E": "Descartes"}, "answer": "A"}, {"id": 320, "question": "Author of the doctrine of the four truths:", "options": {"A": "Siddhartha Gautama", "B": "Confucius", "C": "Patanjali", "D": "Lao Tzu", "E": "Mahavira"}, "answer": "A"}, {"id": 321, "question": "Author of the doctrine of the four truths:", "options": {"A": "Confucius", "B": "Patanjali", "C": "Gautama", "D": "Lao Tzu", "E": "Mahavira"}, "answer": "B"}, {"id": 322, "question": "Author of the mechanical scientific vision of the world:", "options": {"A": "Isaac Newton", "B": "Gottfried Leibniz", "C": "Benedict Spinoza", "D": "Rene Descartes", "E": "Francis Bacon"}, "answer": "A"}, {"id": 323, "question": "Author of the work \"Existentialism is humanism\":", "options": {"A": "K. Jaspers", "B": "A. Camus", "C": "M. Heidegger", "D": "G.O. Marcel", "E": "J.-P. Sartre"}, "answer": "E"}, {"id": 324, "question": "Author of the work \"Existentialism is humanism\":", "options": {"A": "K. Jaspers", "B": "A. Camus", "C": "M. Heidegger", "D": "G.O. Marcel", "E": "J.-P. Sartre"}, "answer": "E"}, {"id": 325, "question": "Author of the work \"Existentialism is humanism\":", "options": {"A": "K. Jaspers", "B": "A. Camus", "C": "M. Heidegger", "D": "G.O. Marcel", "E": "J.-P. Sartre"}, "answer": "E"}, {"id": 326, "question": "Author of the work \"Existentialism is humanism\":", "options": {"A": "K. Jaspers", "B": "A. Camus", "C": "M. Heidegger", "D": "J.-P. Sartre", "E": "G.O. Marcel"}, "answer": "D"}, {"id": 327, "question": "Author of the work \"The Open Society and Its Enemies\", postpositivist:", "options": {"A": "L. Wittgenstein", "B": "T. Adorno", "C": "J. Habermas", "D": "T. Kuhn", "E": "K. Popper"}, "answer": "E"}, {"id": 328, "question": "Author of the work \"«The Revolt of the Masses»:", "options": {"A": "K. Jaspers", "B": "E. Fromm", "C": "E. Toffler", "D": "A. Schweitzer", "E": "J. Ortega y Gasset"}, "answer": "E"}, {"id": 329, "question": "Author of the “double-truth” theory:", "options": {"A": "Ibn-Sina", "B": "Ibn-Rushd", "C": "Al-Kindi", "D": "Ibn-Arabi", "E": "Al-Ghazali"}, "answer": "B"}, {"id": 330, "question": "Author of Utopia.", "options": {"A": "T. More", "B": "T. Campanella", "C": "N. Machiavelli", "D": "J. Bruno", "E": "N. Copernicus"}, "answer": "A"}, {"id": 331, "question": "Basic laws and categories of formal logic discovered:", "options": {"A": "Socrates", "B": "Empedocles", "C": "Aristotle", "D": "Plato", "E": "Plotinus"}, "answer": "C"}, {"id": 332, "question": "Basic laws and categories of formal logic discovered:", "options": {"A": "Socrates", "B": "Empedocles", "C": "Aristotle", "D": "Plato", "E": "Plotinus"}, "answer": "C"}, {"id": 333, "question": "Before the Islam important role in the spiritual culture of Qazaq, there is…:", "options": {"A": "Sufism", "B": "Tribalism", "C": "Anarchism", "D": "Hedonism", "E": "Tengrianism"}, "answer": "E"}, {"id": 334, "question": "Before the Islam run important role in the spiritual culture of Qazaq, there is:", "options": {"A": "Tribalism", "B": "Sufism", "C": "Tengrianism", "D": "Anarchism", "E": "Hedonism"}, "answer": "C"}, {"id": 335, "question": "Belongs to or with something is:", "options": {"A": "property", "B": "quantity", "C": "quality", "D": "measure", "E": "space"}, "answer": "A"}, {"id": 336, "question": "Categories of aesthetics:", "options": {"A": "good and evil", "B": "being and consciousness", "C": "concept and judgment", "D": "beautiful and ugly", "E": "form and content"}, "answer": "D"}, {"id": 337, "question": "Category, reflecting the external, sensibly perceived sides of objects and processes:", "options": {"A": "phenomenon", "B": "image", "C": "configuration", "D": "profile", "E": "shape"}, "answer": "A"}, {"id": 338, "question": "Christian world outlook stands for the idea of creation of the world out of nothing. It is …:", "options": {"A": "Theocentrism", "B": "Faith", "C": "Spirituality", "D": "Symbolism", "E": "Creationism"}, "answer": "E"}, {"id": 339, "question": "Christian world outlook stands for the idea of creation of the world out of nothing. It is …:", "options": {"A": "Spirituality", "B": "Faith", "C": "Creationism", "D": "Symbolism", "E": "Theocentrism"}, "answer": "C"}, {"id": 340, "question": "Class struggle is a principle of:", "options": {"A": "Intuitionism", "B": "Marxism", "C": "Existentialism", "D": "Pragmatism", "E": "Structuralism"}, "answer": "B"}, {"id": 341, "question": "Confucius and Meng-tzu believed that human nature is:", "options": {"A": "Inherently evil", "B": "Initially fair", "C": "Initially moral", "D": "Initially beautiful", "E": "Inherently good"}, "answer": "E"}, {"id": 342, "question": "Created the heliocentric system:", "options": {"A": "Nicolaus Copernicus", "B": "Giordano Bruno", "C": "Nicholas of Cus", "D": "Galileo Galilei", "E": "Tycho Brahe"}, "answer": "A"}, {"id": 343, "question": "Currently, the most recognized classification of Sciences is based on:", "options": {"A": "Profession of scientist", "B": "Vocation of scientist", "C": "The object of research", "D": "The subject of research", "E": "Human abilities"}, "answer": "D"}, {"id": 344, "question": "Democritus is belonging to … school", "options": {"A": "atomistic", "B": "ionian", "C": "idealist", "D": "elestic", "E": "hellenistic"}, "answer": "A"}, {"id": 345, "question": "Dialectics in antique philosophy means:", "options": {"A": "the art of debate", "B": "alternative style of thinking", "C": "the development of the “absolute idea”", "D": "the study of the objective world", "E": "the theory of scientific cognition"}, "answer": "A"}, {"id": 346, "question": "Doubts in varying degrees the existence of knowledge and reality:", "options": {"A": "Skepticism", "B": "Empiricism", "C": "Rationalism", "D": "Pragmatism", "E": "Solipsism"}, "answer": "A"}, {"id": 347, "question": "Empiricism recognized as the foundation of knowledge is:", "options": {"A": "Myth", "B": "Faith", "C": "Experience", "D": "Will", "E": "Reason"}, "answer": "C"}, {"id": 348, "question": "Existentialist J.-P. Sartre thought that person was condemned to:", "options": {"A": "freedom", "B": "happiness", "C": "suffering", "D": "love", "E": "death"}, "answer": "A"}, {"id": 349, "question": "Father of Greek philosophy is", "options": {"A": "Thales", "B": "Pythogoras", "C": "st. Augustine", "D": "Socrates", "E": "Richard Rorty"}, "answer": "A"}, {"id": 350, "question": "For Hegel, Absolute Idea develops over time in a series of dialectic movements from:", "options": {"A": "Affirmation + Negation", "B": "Unity + struggle = opposites", "C": "Quantitative + qualitative = certain limit", "D": "Thesis + antithesis = synthesis", "E": "Own self + not-self = Absolute Idea"}, "answer": "D"}, {"id": 351, "question": "Forms of worldview", "options": {"A": "Consciousness, thinking, mind", "B": "Myth, religion, philosophy", "C": "God, nature, society", "D": "Ontology, epistemology, axiology", "E": "Man, person, individual"}, "answer": "B"}, {"id": 352, "question": "Founder of Taoism:", "options": {"A": "Confucius", "B": "Lao Tzu", "C": "Shang Di", "D": "Mencius", "E": "Huang Di"}, "answer": "B"}, {"id": 353, "question": "Francis Bacon was the founder of empiricism and he believed that the purpose of science is:", "options": {"A": "To achieve the truth", "B": "Do experiments", "C": "Make reasonable arguments", "D": "To benefit humanity", "E": "Winning an argument"}, "answer": "D"}, {"id": 354, "question": "From the point of view of externalism, the emergence of science is due to:", "options": {"A": "External circumstances", "B": "Social environment", "C": "Economic situation", "D": "Political power", "E": "All of the above"}, "answer": "E"}, {"id": 355, "question": "He created a philosophical system based on the dialectical method:", "options": {"A": "Socrates", "B": "Rene Descartes", "C": "Francis Bacon", "D": "Georg Hegel", "E": "Aristotle"}, "answer": "D"}, {"id": 356, "question": "Idea of separation into The world of things and the world of ideas belong to", "options": {"A": "Plato", "B": "Pythogoras", "C": "Thales", "D": "Descartes", "E": "Richard Rorty"}, "answer": "A"}, {"id": 357, "question": "Idealism is a systematic philosophy which teaches the supremacy of", "options": {"A": "Spirit over matter", "B": "god", "C": "noumena", "D": "materialism", "E": "knowledge"}, "answer": "A"}, {"id": 358, "question": "Immanence idea are known as:", "options": {"A": "Innate ideas", "B": "Adventitious ideas", "C": "Factitious ideas", "D": "Beliefs", "E": "rational thoughts"}, "answer": "A"}, {"id": 359, "question": "Impartial and just treatment or behavior without favoritism or discrimination:", "options": {"A": "fairness", "B": "straightforwardness", "C": "rigidity", "D": "humbleness", "E": "tolerance"}, "answer": "A"}, {"id": 360, "question": "Impartial and just treatment or behavior without favoritism or discrimination:", "options": {"A": "fairness", "B": "straightforwardness", "C": "rigidity", "D": "humbleness", "E": "tolerance"}, "answer": "A"}, {"id": 361, "question": "In Ancient Greece, an idea that governed the creation of works of art with correspondence to the physical world that understood as a model for beauty, truth, and the good:", "options": {"A": "logos", "B": "anamnesis", "C": "gnosis", "D": "eidos", "E": "mimesis"}, "answer": "E"}, {"id": 362, "question": "In ancient Greek philosophy, the impossibility of think about motion has been proven in:", "options": {"A": "Aristotelian syllogisms", "B": "Zeno’s paradoxes", "C": "Pythagorean proves", "D": "Socrates’ definitions", "E": "Plato's dialogues"}, "answer": "B"}, {"id": 363, "question": "In ancient Greek philosophy, the impossibility of think about motion has been proven in:", "options": {"A": "Aristotelian syllogisms", "B": "Zeno’s paradoxes", "C": "Pythagorean proves", "D": "Socrates’ definitions", "E": "Plato's dialogues"}, "answer": "B"}, {"id": 364, "question": "In ancient times the concept “physis” meant:", "options": {"A": "nature", "B": "society", "C": "psyche", "D": "state", "E": "human being"}, "answer": "A"}, {"id": 365, "question": "In Hellenistic philosophy the word “ataraxia” means:", "options": {"A": "equanimity, impassivity", "B": "heartlessness", "C": "fatigue, tiredness", "D": "wisdom", "E": "activity and creativity"}, "answer": "A"}, {"id": 366, "question": "In Hinduism, the absolute reality is designated by the concept:", "options": {"A": "atman", "B": "moksha", "C": "jinx", "D": "Brahman", "E": "ahimsa"}, "answer": "D"}, {"id": 367, "question": "In Taoism adherence to the principle of “naturalness” means:", "options": {"A": "following to the Dao as the law of nature and cosmos", "B": "following to your own needs", "C": "transforming the outer world for the better", "D": "implementing the principle of love for the neighbor", "E": "faith in God"}, "answer": "A"}, {"id": 368, "question": "In the ontology, what does the Greek word “ontos” mean:", "options": {"A": "being", "B": "dialectics", "C": "consciousness", "D": "cognition", "E": "knowledge"}, "answer": "A"}, {"id": 369, "question": "In the philosophy of science, the problem of distinguishing the science and non-science:", "options": {"A": "falsification", "B": "verification", "C": "proliferation", "D": "demarcation", "E": "negative heuristics"}, "answer": "D"}, {"id": 370, "question": "In the philosophy of this period, the motives of individualism, egoism, and utilitarianism associated with nascent capitalism are clearly heard:", "options": {"A": "Ancient Philosophy", "B": "Medieval Philosophy", "C": "Renaissance Philosophy", "D": "Philosophy of Modern Time", "E": "Philosophy of 20th century"}, "answer": "D"}, {"id": 371, "question": "In the schools of Indian philosophical thought what means action:", "options": {"A": "Karma", "B": "Dharma", "C": "Samsara", "D": "Reincarnation", "E": "Nirvana"}, "answer": "A"}, {"id": 372, "question": "In what period of philosophy was Man the image and likeness of God?", "options": {"A": "Ancient Philosophy", "B": "Medieval Philosophy", "C": "Renaissance Philosophy", "D": "Philosophy of Modern Time", "E": "Philosophy of 20th century"}, "answer": "B"}, {"id": 373, "question": "Indicate the law of dialectics:", "options": {"A": "the law of gravity", "B": "Law of conservation of matter and energy", "C": "the law of the excluded middle", "D": "The law of unity and struggle of opposites", "E": "Law of Sufficient Reason"}, "answer": "D"}, {"id": 374, "question": "Internalism asserts that the factors influencing the development of science are related to:", "options": {"A": "External circumstances", "B": "Social environment", "C": "Economic situation", "D": "The inner nature of scientific knowledge", "E": "Political power"}, "answer": "D"}, {"id": 375, "question": "Introduced the concept of \"borderline situation\" into philosophy:", "options": {"A": "J.-P. Sartre", "B": "A.Camus", "C": "K.Jaspers", "D": "G.Marcel", "E": "M.Heidegger"}, "answer": "C"}, {"id": 376, "question": "Invisible, omnipresent law of nature, society, human behavior and thinking, the path:", "options": {"A": "Lee", "B": "Fa", "C": "Siao", "D": "Zhen", "E": "Tao"}, "answer": "E"}, {"id": 377, "question": "is something that can be said to exist:", "options": {"A": "Knowledge", "B": "Category", "C": "Being", "D": "Notion", "E": "Space"}, "answer": "C"}, {"id": 378, "question": "is the belief in and worship of controlling power:", "options": {"A": "Religion", "B": "Culture", "C": "Science", "D": "Art", "E": "Game"}, "answer": "A"}, {"id": 379, "question": "Is the belief in and worship of controlling power:", "options": {"A": "Religion", "B": "Culture", "C": "Science", "D": "Art", "E": "Game"}, "answer": "A"}, {"id": 380, "question": "is the branch of philosophy that studies the nature of Being:", "options": {"A": "Ontology", "B": "Neoplatonism", "C": "Metaphysics", "D": "Dualism", "E": "Epistemology"}, "answer": "A"}, {"id": 381, "question": "Know thyself - said:", "options": {"A": "Confucius", "B": "Heraclitus", "C": "Protagoras", "D": "Parmenides", "E": "Socrates"}, "answer": "E"}, {"id": 382, "question": "Leonardo da Vinci was not only a great artist, but also:", "options": {"A": "A great inventor", "B": "A scientist", "C": "An engineer", "D": "A writer", "E": "All of the above"}, "answer": "E"}, {"id": 383, "question": "Lewis Mumford considers a strongly hierarchical, technocratic organization of society as…:", "options": {"A": "compunication", "B": "megamachine", "C": "coordination", "D": "technicism", "E": "technopark"}, "answer": "B"}, {"id": 384, "question": "Maieutic method is eleborated by", "options": {"A": "Socrates", "B": "Plato", "C": "Pythogoras", "D": "Thales", "E": "Anaximander"}, "answer": "A"}, {"id": 385, "question": "Man is the measure of all things - believes:", "options": {"A": "Parmenides", "B": "Protagoras", "C": "Socrates", "D": "Democritus", "E": "Plato"}, "answer": "B"}, {"id": 386, "question": "Man is the measure of all things, according to", "options": {"A": "Protagoras", "B": "Plato", "C": "Aristotle", "D": "Socrates", "E": "Descartes"}, "answer": "A"}, {"id": 387, "question": "Materialistic school in ancient Indian philosophy:", "options": {"A": "Charvaka", "B": "Buddhism", "C": "Yoga", "D": "Upanishads", "E": "Jainism"}, "answer": "A"}, {"id": 388, "question": "Mayeutics is:", "options": {"A": "The ability to cleverly debate", "B": "The art of having a conversation, an argument", "C": "Socratic method of finding the truth", "D": "The ideal of physical and moral perfection", "E": "The beginning of being"}, "answer": "C"}, {"id": 389, "question": "Meaning of Taoist principle \"Wu-wei\":", "options": {"A": "Non-resistance to evil", "B": "Action", "C": "Discipline and order in society", "D": "Non-action", "E": "Infinity of the Universe"}, "answer": "D"}, {"id": 390, "question": "MILESIAN PHILOSOPHERS ARE KNOWN AS", "options": {"A": "Natural philosophers", "B": "Empiricists", "C": "Atomisits", "D": "rationalists", "E": "none of them"}, "answer": "A"}, {"id": 391, "question": "Moral law: \"Act so that people and humanity have always been only a goal but not a means\" is called:", "options": {"A": "Kant's categorical imperative", "B": "Kant’s hypothetical imperative", "C": "Schweitzer’s ethics of reverence for life", "D": "Buddhist ethics of compassion", "E": "Feuerbach’s anthropological materialism"}, "answer": "A"}, {"id": 392, "question": "Outlined a system of laws mechanics and law universal gravity:", "options": {"A": "Francis Bacon", "B": "Gottfried Leibniz", "C": "Benedict Spinoza", "D": "Isaac Newton", "E": "Rene Descartes"}, "answer": "D"}, {"id": 393, "question": "Philosopher and theologian who put forward five proofs for the existence of God:", "options": {"A": "Aurelius Augustine", "B": "William of Ockham", "C": "Roger Bacon", "D": "Thomas Aquinas", "E": "Anselm of Canterbury"}, "answer": "D"}, {"id": 394, "question": "Philosopher, who claimed “God is dead and we killed him”:", "options": {"A": "Nietzsche", "B": "Kierkegaard", "C": "Marx", "D": "Freud", "E": "Schopenhauer"}, "answer": "A"}, {"id": 395, "question": "Philosopher, who ho was the first mentioned the term “philosophy”:", "options": {"A": "Pythagoras", "B": "Aristotle", "C": "Socrates", "D": "Plato", "E": "Epicures"}, "answer": "A"}, {"id": 396, "question": "Philosopher, who said, That which does not kill me makes me stronger:", "options": {"A": "Friedrich Nietzsche", "B": "John Locke", "C": "Bertrand Russell", "D": "Thomas Aquinas", "E": "Blaise Pascal"}, "answer": "A"}, {"id": 397, "question": "Philosopher, who said, There is beauty in everything, but not everyone will see:", "options": {"A": "Confucius", "B": "Socrates", "C": "Thales", "D": "Democritus", "E": "Heraclitus"}, "answer": "A"}, {"id": 398, "question": "Philosophers, close towards internalism are:", "options": {"A": "Descartes", "B": "Hegel", "C": "Popper", "D": "Husserl", "E": "All of the above"}, "answer": "E"}, {"id": 399, "question": "Philosophical direction, recognizing one beginning of the world:", "options": {"A": "dualism", "B": "Agnosticism", "C": "mechanism", "D": "Monism", "E": "Pluralism"}, "answer": "D"}, {"id": 400, "question": "Philosophical doctrine that denies the fundamental possibility of knowing the world:", "options": {"A": "skepticism", "B": "Agnosticism", "C": "sensationalism", "D": "Anthropologism", "E": "Atheism"}, "answer": "B"}, {"id": 401, "question": "Philosophical term of ethics:", "options": {"A": "moral", "B": "reflection", "C": "sense", "D": "imagination", "E": "perception"}, "answer": "A"}, {"id": 402, "question": "Plato's philosophical school is", "options": {"A": "Academy", "B": "Lyceum", "C": "University", "D": "School", "E": "All are true"}, "answer": "A"}, {"id": 403, "question": "Position, that is based on an idea of the limited possibilities of science, and considering it as a force alien to the true nature of human:", "options": {"A": "scientism", "B": "pragmatism", "C": "panlogism", "D": "anthropocentrism", "E": "anti-scientism"}, "answer": "E"}, {"id": 404, "question": "Position, which is based on an idea of scientific knowledge as a high cultural value and sufficient condition for human orientation in the world:", "options": {"A": "voluntarism", "B": "scientism", "C": "anti-scientism", "D": "secularism", "E": "agnosticism"}, "answer": "B"}, {"id": 405, "question": "Positive sciences, according to positivism, are based on:", "options": {"A": "A priori knowledge", "B": "Deductive methods", "C": "Conclusions", "D": "Scientific facts of observation and experiment", "E": "Intuition"}, "answer": "D"}, {"id": 406, "question": "Protagoras is a … Phlosopher", "options": {"A": "Sophist", "B": "Spiritualist", "C": "Religious", "D": "Idealist", "E": "Analytic"}, "answer": "A"}, {"id": 407, "question": "Protagoras is the author of remark:", "options": {"A": "man is the measure of all things", "B": "man is a social animal", "C": "man is a bizarre creature", "D": "man is a superman", "E": "man is a political animal"}, "answer": "A"}, {"id": 408, "question": "Pthogoras was born on", "options": {"A": "Samos", "B": "Athens", "C": "Iona", "D": "Serbia", "E": "Milesia"}, "answer": "A"}, {"id": 409, "question": "questions like “What is the being?” is", "options": {"A": "Ontological", "B": "heliocentric", "C": "theoretical", "D": "teleological", "E": "theosofical"}, "answer": "A"}, {"id": 410, "question": "Rational knowledge includes:", "options": {"A": "concept, judgment, conclusion", "B": "analogy, hypothesis, ordering", "C": "induction, deduction generalization", "D": "intuition, reason, mind", "E": "sensation, perception, representation"}, "answer": "A"}, {"id": 411, "question": "Rationalism is the direction of philosophy, which is based on:", "options": {"A": "Method", "B": "Experience", "C": "Reason", "D": "Idea", "E": "Experiment"}, "answer": "C"}, {"id": 412, "question": "Rationalism is:", "options": {"A": "doctrine that affirms that all knowledge is based on reason", "B": "a doctrine that affirms that all knowledge is based on experience", "C": "a view more in harmony with science than with traditional religion", "D": "new ideas in all areas of the culture", "E": "the mechanistic picture of the world"}, "answer": "A"}, {"id": 413, "question": "Rationalism is:", "options": {"A": "Doctrine that affirms that all knowledge is based on reason", "B": "A doctrine that affirms that all knowledge is based on experience", "C": "A view more in harmony with science than with traditional religion", "D": "New ideas in all areas of the culture", "E": "The mechanistic picture of the world"}, "answer": "A"}, {"id": 414, "question": "Recognition of the plurality of substance:", "options": {"A": "monism", "B": "Pluralism", "C": "dualism", "D": "Deism", "E": "Rationalism"}, "answer": "B"}, {"id": 415, "question": "Recognition of two substances at the foundation of being:", "options": {"A": "Pluralism", "B": "Dualism", "C": "Monism", "D": "Conventionalism", "E": "Parallelism"}, "answer": "B"}, {"id": 416, "question": "Representative of the Milesian school:", "options": {"A": "Socrates", "B": "Democritus", "C": "Heraclitus", "D": "Diogenes", "E": "Thales"}, "answer": "E"}, {"id": 417, "question": "Representatives of marxism:", "options": {"A": "Popper, Mach, Avenarius", "B": "Scheler, Gehlen, Plessner", "C": "Sartre, Camus, Jaspers", "D": "Freud, Jung, Simmel", "E": "Marx, Engels, Plekhanov"}, "answer": "E"}, {"id": 418, "question": "Representatives of marxism:", "options": {"A": "Popper, Mach, Avenarius", "B": "Scheler, Gehlen, Plessner", "C": "Sartre, Camus, Jaspers", "D": "Freud, Jung, Simmel", "E": "Marx, Engels, Plekhanov"}, "answer": "E"}, {"id": 419, "question": "Representatives of positivism:", "options": {"A": "Comte, Mach, Avenarius", "B": "Scheler, Gehlen, Plessner", "C": "Sartre, Camus, Jaspers", "D": "Freud, Jung, Simmel", "E": "Marx, Engels, Plekhanov"}, "answer": "E"}, {"id": 420, "question": "Representatives of post-positivism:", "options": {"A": "Hegel, Feuerbach, Marx", "B": "Popper, Kuhn, Lakatos", "C": "Kierkegaard, Sartre, Camus", "D": "Schleiermacher, Dilthey, Gadamer", "E": "Husserl, Heidegger, Jaspers"}, "answer": "B"}, {"id": 421, "question": "School of thought that questions the possibility of certainty in knowledge:", "options": {"A": "skepticism", "B": "pessimism", "C": "optimism", "D": "realism", "E": "nominalism"}, "answer": "A"}, {"id": 422, "question": "Scientism is:", "options": {"A": "Religious as worldview", "B": "Broad criticism of science", "C": "The doctrine of the laws of scientific knowledge.", "D": "The declaration of science as the highest cultural value", "E": "The development of social inequality"}, "answer": "D"}, {"id": 423, "question": "SOCRATES IS A PROMINENT … PHILOSOPHER", "options": {"A": "Greek", "B": "German", "C": "Religious", "D": "Roman", "E": "Kazakh"}, "answer": "A"}, {"id": 424, "question": "Suffering and evil deal with:", "options": {"A": "ahimsa", "B": "nirvana", "C": "Brahmin", "D": "moksha", "E": "samsara"}, "answer": "E"}, {"id": 425, "question": "Summa Theologica is the work of", "options": {"A": "St. Thomas Aquinas", "B": "St. Anselm", "C": "St. Augustine", "D": "Socrates", "E": "Thale"}, "answer": "A"}, {"id": 426, "question": "Teaching about God is:", "options": {"A": "Theology", "B": "Mythology", "C": "Metaphysics", "D": "History", "E": "Dialectics"}, "answer": "A"}, {"id": 427, "question": "Teaching about God is:", "options": {"A": "Theology", "B": "Mythology", "C": "Metaphysics", "D": "History", "E": "Dialectics"}, "answer": "A"}, {"id": 428, "question": "Teaching about knowledge:", "options": {"A": "ontology", "B": "Epistemology", "C": "metaphysics", "D": "Axiology", "E": "Anthropology"}, "answer": "B"}, {"id": 429, "question": "Teachings about Being:", "options": {"A": "Epistemology", "B": "Axiology", "C": "Anthology", "D": "Anthropology", "E": "Ontology"}, "answer": "E"}, {"id": 430, "question": "Thales is … philosopher", "options": {"A": "Milesian", "B": "Hebrew", "C": "Arab", "D": "German", "E": "Kazakh"}, "answer": "A"}, {"id": 431, "question": "The ability to create mental images or pictures is called…:", "options": {"A": "imagination", "B": "perception", "C": "reflection", "D": "consciousness", "E": "will"}, "answer": "A"}, {"id": 432, "question": "The ancient Greek philosopher Pythagoras stated:", "options": {"A": "All things are similar in number", "B": "War is the father of everything and the mother of everything", "C": "Know thyself", "D": "I know that I don't know anything", "E": "Everything flows, everything changes"}, "answer": "A"}, {"id": 433, "question": "The application of knowledge to reach practical goals in a reproducible way and also the product of such an endeavor:", "options": {"A": "technology", "B": "production", "C": "reproduction", "D": "quantification", "E": "qualification"}, "answer": "A"}, {"id": 434, "question": "The arche of things is apeiron, according to", "options": {"A": "Anaximander", "B": "Thales", "C": "Plato", "D": "Socrates", "E": "Abai"}, "answer": "A"}, {"id": 435, "question": "The author of 3 laws of dialectics?", "options": {"A": "G. Hegel", "B": "L. Feuerbach", "C": "I. Kant", "D": "J. Fichte", "E": "F. Schelling"}, "answer": "A"}, {"id": 436, "question": "The author of 3 laws of dialectics?", "options": {"A": "G. Hegel", "B": "L. Feuerbach", "C": "I. Kant", "D": "J. Fichte", "E": "F. Schelling"}, "answer": "A"}, {"id": 437, "question": "The author of conception “the end of history”:", "options": {"A": "F. Fukuyama", "B": "A. Toynbee", "C": "M. Weber", "D": "O. Spengler", "E": "D. Bell"}, "answer": "A"}, {"id": 438, "question": "The author of the book \"The World as Will and Representation\", whose teaching became the source of the philosophy of life:", "options": {"A": "A. Schopenhauer", "B": "Z. Freud", "C": "F. Nietzsche", "D": "M. Scheler", "E": "A. Gehlen"}, "answer": "A"}, {"id": 439, "question": "The author of the Concept of Personal Knowledge is:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Michael Polanyi", "D": "Bertrand Russell", "E": "Isaak Newton"}, "answer": "C"}, {"id": 440, "question": "The author of the concepts of “philosophical belief”, “axial time”:", "options": {"A": "A. Camus", "B": "M. Heidegger", "C": "K. Jaspers", "D": "J.-P. Sartre", "E": "M. Buber"}, "answer": "C"}, {"id": 441, "question": "The author of the dictum: \"It is impossible to think of anything at all in the world, or indeed even beyond it, that could be considered good without limitation except a good will.\":", "options": {"A": "I. Kant", "B": "A. Schopenhauer", "C": "Abay", "D": "Spinoza", "E": "Augustine"}, "answer": "A"}, {"id": 442, "question": "The author of the dictum: \"It is impossible to think of anything at all in the world, or indeed even beyond it, that could be considered good without limitation except a good will.\":", "options": {"A": "Augustine", "B": "Schopenhauer", "C": "Abay", "D": "Spinoza", "E": "Kant"}, "answer": "E"}, {"id": 443, "question": "The author of the expression: “thought and being are one and the same”:", "options": {"A": "Plato", "B": "Pythagoras", "C": "Heraclitus", "D": "Aristotle", "E": "Parmenides"}, "answer": "E"}, {"id": 444, "question": "The author of the famous treatise of the Middle Ages \"Canon of medical science\":", "options": {"A": "Al-Kindi", "B": "Ibn Sina", "C": "Al-Farabi", "D": "Ibn Khaldun", "E": "Al-Ghazali"}, "answer": "B"}, {"id": 445, "question": "The author of the saying \"Freedom is a conscious necessity\":", "options": {"A": "J. Locke", "B": "Fr. Bacon", "C": "B.Spinoza", "D": "G.F. Leibniz", "E": "R. Descartes"}, "answer": "C"}, {"id": 446, "question": "The author of the term \"paradigm\":", "options": {"A": "Thomas Kuhn", "B": "Erich Fromm", "C": "Sigmund Freud", "D": "Bertrand Russell", "E": "Imre Lakatos"}, "answer": "A"}, {"id": 447, "question": "The author of theory about One-Dimensional Man:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Herbert Marcuse", "D": "Albert Einstein", "E": "Isaak Newton"}, "answer": "C"}, {"id": 448, "question": "The basis for regulation of human behavior, according to legalism:", "options": {"A": "cruel laws", "B": "custom", "C": "tradition", "D": "ritual", "E": "morality"}, "answer": "A"}, {"id": 449, "question": "The belief that God is present in all things of nature:", "options": {"A": "Pantheism", "B": "Syncretism", "C": "Animism", "D": "Theology", "E": "Anthropology"}, "answer": "A"}, {"id": 450, "question": "The belief that God is present in all things of nature:", "options": {"A": "Syncretism", "B": "Pantheism", "C": "Animism", "D": "Theology", "E": "Anthropology"}, "answer": "B"}, {"id": 451, "question": "The concept of an \"open society\" was developed by:", "options": {"A": "Popper", "B": "Plato", "C": "Hegel", "D": "Hobbes", "E": "Spinoza"}, "answer": "A"}, {"id": 452, "question": "The concept used in the logic and methodology of science to denote the process of establishing the truth of scientific statements as a result of their empirical experience:", "options": {"A": "Hypothesis", "B": "The concept", "C": "Falsification", "D": "Demarcation", "E": "Verification"}, "answer": "E"}, {"id": 453, "question": "The concept used in the logic and methodology of science to denote the process of establishing the truth of scientific statements as a result of their empirical proof:", "options": {"A": "Hypothesis", "B": "The concept", "C": "Falsification", "D": "Demarcation", "E": "Verification"}, "answer": "E"}, {"id": 454, "question": "The concept used in the logic and methodology of science to denote the process of establishing the truth of scientific statements as a result of their empirical proof:", "options": {"A": "Hypothesis", "B": "The concept", "C": "Falsification", "D": "Demarcation", "E": "Verification"}, "answer": "E"}, {"id": 455, "question": "The concept used in the logic and methodology of science to denote the process of establishing the truth of scientific statements as a result of their empirical experience:", "options": {"A": "Hypothesis", "B": "The concept", "C": "Verification", "D": "Demarcation", "E": "Falsification"}, "answer": "C"}, {"id": 456, "question": "The concept used in the logic and methodology of science to denote the process of establishing the truth of scientific statements as a result of their empirical experience:", "options": {"A": "Hypothesis", "B": "The concept", "C": "Verification", "D": "Demarcation", "E": "Falsification"}, "answer": "C"}, {"id": 457, "question": "The concepts of \"Ego\", \"It\", \"Super-Ego\" are basic in:", "options": {"A": "existentialism", "B": "psychoanalysis", "C": "personalism", "D": "machism", "E": "positivism"}, "answer": "B"}, {"id": 458, "question": "The concepts of \"Ego\", \"It\", \"Super-Ego\" are basic in:", "options": {"A": "existentialism", "B": "psychoanalysis", "C": "personalism", "D": "machism", "E": "positivism"}, "answer": "B"}, {"id": 459, "question": "The direction of Aristotle's followers in Medieval Arab-Muslim Philosophy is:", "options": {"A": "Eastern peripateticism", "B": "Kalam", "C": "Ismailism", "D": "Ishraqism", "E": "Sufism"}, "answer": "A"}, {"id": 460, "question": "The English word \"ethics\" is derived from the ancient Greek word ēthikós, meaning:", "options": {"A": "relating to one's character", "B": "establishing moral order", "C": "elimination of evil", "D": "compliance with the moral rules", "E": "purposeful life"}, "answer": "A"}, {"id": 461, "question": "The ethical concept of Confucianism, identifying the positive qualities of a person:", "options": {"A": "a noble person", "B": "short man", "C": "an official", "D": "warlord", "E": "statesman"}, "answer": "A"}, {"id": 462, "question": "The expression “Everything I say is false” is…:", "options": {"A": "truth", "B": "sophism", "C": "wordplay", "D": "deception", "E": "error"}, "answer": "B"}, {"id": 463, "question": "The expression “One cannot enter into the same river even once” is…:", "options": {"A": "relativism", "B": "sophism", "C": "skepticism", "D": "pessimism", "E": "agnosticism"}, "answer": "A"}, {"id": 464, "question": "The famous words \"Language is the house of being\" belong to:", "options": {"A": "M. Heidegger", "B": "K. Jaspers", "C": "J.-P. Sartre", "D": "A. Camus", "E": "K. Popper"}, "answer": "A"}, {"id": 465, "question": "The first form of worldview:", "options": {"A": "Religion", "B": "Myth", "C": "Philosophy", "D": "Art", "E": "morality"}, "answer": "B"}, {"id": 466, "question": "The form of empirical cognition:", "options": {"A": "judgment", "B": "hypothesis", "C": "observation", "D": "syllogism", "E": "theory"}, "answer": "C"}, {"id": 467, "question": "The founder of rationalism, Rene Descartes, is known for his expression “Cogito ergo sum\", which means:", "options": {"A": "I sense, therefore I am", "B": "I see, therefore I am", "C": "I hear, therefore I am", "D": "I think, therefore I am", "E": "I perceive, therefore I am"}, "answer": "D"}, {"id": 468, "question": "The founder of the experimental mathematical methods of nature research:", "options": {"A": "Galileo Galilei", "B": "Nicolas Copernicus", "C": "Leonardo da Vinci", "D": "Thomas Moore", "E": "Niccolo Machiavelli"}, "answer": "A"}, {"id": 469, "question": "The founder of Thomism St.", "options": {"A": "Thomas Aquinas", "B": "Protagoras", "C": "Anaximander", "D": "Socrates", "E": "Alexander"}, "answer": "A"}, {"id": 470, "question": "The highest individual subjective principle in Ancient Indian Philosophy is:", "options": {"A": "Brahman", "B": "Atman", "C": "Samsara", "D": "Karma", "E": "Nirvana"}, "answer": "B"}, {"id": 471, "question": "The idea of \"revaluation of all values\" came up with:", "options": {"A": "A. Schweitzer", "B": "I. Kant", "C": "F. Nietzsche", "D": "W. Windelband", "E": "G. Hegel"}, "answer": "C"}, {"id": 472, "question": "The influence of philosophy on XVII century Modern science is the creation of two most important philosophical and methodological concepts:", "options": {"A": "Modernism and Postmodernism", "B": "Rationalism and Empiricism", "C": "Sensualism and Empiricism", "D": "Personalism and Pragmatism", "E": "Existentialism and"}, "answer": "B"}, {"id": 473, "question": "The law of retribution is:", "options": {"A": "Brahman", "B": "Atman", "C": "Samsara", "D": "Karma", "E": "Nirvana"}, "answer": "D"}, {"id": 474, "question": "The main function of science is:", "options": {"A": "The search and production of new knowledge", "B": "Educational", "C": "Cultural", "D": "Technological", "E": "Social"}, "answer": "A"}, {"id": 475, "question": "The main principle of Abai's philosophy is:", "options": {"A": "Be fair", "B": "Be moral", "C": "Be human", "D": "Be good", "E": "Be beautiful"}, "answer": "C"}, {"id": 476, "question": "The main problem of existentialism:", "options": {"A": "The essence of man", "B": "Human faith", "C": "The existence of a person", "D": "The human mind", "E": "Human conscience"}, "answer": "C"}, {"id": 477, "question": "The main problem of existentialism:", "options": {"A": "The essence of man", "B": "Human faith", "C": "The existence of a person", "D": "The human mind", "E": "Human conscience"}, "answer": "C"}, {"id": 478, "question": "The main problem of existentialism:", "options": {"A": "The essence of man", "B": "Human faith", "C": "The existence of a person", "D": "The human mind", "E": "Human conscience"}, "answer": "C"}, {"id": 479, "question": "The main purpose of science is:", "options": {"A": "Make a discovery", "B": "To achieve the truth", "C": "Do experiments", "D": "Explore nature", "E": "Create theories"}, "answer": "B"}, {"id": 480, "question": "The main task of philosophy according to Bacon is the construction of:", "options": {"A": "A new scientific method", "B": "A new experiment", "C": "A new argument", "D": "A new idea", "E": "A new reason"}, "answer": "A"}, {"id": 481, "question": "The main task of philosophy is the construction of a new method of science, believed:", "options": {"A": "Socrates", "B": "Rene Descartes", "C": "Francis Bacon", "D": "Georg Hegel", "E": "Aristotle"}, "answer": "C"}, {"id": 482, "question": "The measurement of something by stating how much there is of it, an amount or number of something is:", "options": {"A": "quantity", "B": "quality", "C": "property", "D": "measure", "E": "space"}, "answer": "A"}, {"id": 483, "question": "The Muslim Renaissance occurred:", "options": {"A": "Before the European Renaissance", "B": "During the European Renaissance", "C": "After the European Renaissance", "D": "In Modern times", "E": "In the Age of Enlightenment"}, "answer": "A"}, {"id": 484, "question": "The negation of the causality principle:", "options": {"A": "determinism", "B": "agnosticism", "C": "indeterminism", "D": "fatalism", "E": "idealism"}, "answer": "C"}, {"id": 485, "question": "The negation of the causality principle:", "options": {"A": "indeterminism", "B": "agnosticism", "C": "determinism", "D": "fatalism", "E": "idealism"}, "answer": "A"}, {"id": 486, "question": "The normative ethical position that moral agents ought to act in their own self-interest:", "options": {"A": "ethical egoism", "B": "rational egoism", "C": "psychological egoism", "D": "immorality", "E": "amorality"}, "answer": "A"}, {"id": 487, "question": "The philosopher who formulated 4 methodological rules:", "options": {"A": "Socrates", "B": "Rene Descartes", "C": "Francis Bacon", "D": "Georg Hegel", "E": "Aristotle"}, "answer": "B"}, {"id": 488, "question": "The philosopher who introduced the concepts of “normal science” and “paradigm shift”:", "options": {"A": "I. Lakatos", "B": "P. Feyerabend", "C": "A. Comte", "D": "T. Kuhn", "E": "L. Wittgenstein"}, "answer": "D"}, {"id": 489, "question": "The philosophy of technology explores:", "options": {"A": "The phenomenon of technology in general", "B": "The place of technology in social development", "C": "Wide historical perspective of technology", "D": "All of the above", "E": "None of the above"}, "answer": "D"}, {"id": 490, "question": "The practical value of science is as follows:", "options": {"A": "Do experiments", "B": "Explore nature", "C": "Make a discovery", "D": "To bring benefits to humanity", "E": "Create theories"}, "answer": "D"}, {"id": 491, "question": "The prerequisites of the experimental method were obtained in the era of:", "options": {"A": "Antiquity", "B": "the Middle Ages", "C": "Renaissance", "D": "Modern Times", "E": "Postmodern"}, "answer": "C"}, {"id": 492, "question": "The principle of falsification was introduced into scientific circulation:", "options": {"A": "J. Derrida", "B": "A. Camus", "C": "K. Jaspers", "D": "T. Kuhn", "E": "K. Popper"}, "answer": "E"}, {"id": 493, "question": "The principle of falsification was introduced into scientific circulation:", "options": {"A": "J. Derrida", "B": "A. Camus", "C": "K. Jaspers", "D": "T. Kuhn", "E": "K. Popper"}, "answer": "E"}, {"id": 494, "question": "The purification and purgation of emotions through dramatic art, or any extreme emotional state that results in renewal and restoration:", "options": {"A": "catharsis", "B": "catalepsy", "C": "ataraxy", "D": "mimesis", "E": "phronesis"}, "answer": "A"}, {"id": 495, "question": "The purification and purgation of emotions through dramatic art, or any extreme emotional state that results in renewal and restoration:", "options": {"A": "mimesis", "B": "catalepsy", "C": "ataraxy", "D": "catharsis", "E": "phronesis"}, "answer": "D"}, {"id": 496, "question": "The reflection of separate properties of the objects of real world with the help of our sense organs is:", "options": {"A": "sense", "B": "affect", "C": "will", "D": "imagination", "E": "perception"}, "answer": "A"}, {"id": 497, "question": "The Republic is the famous work of", "options": {"A": "Plato", "B": "Socrates", "C": "Thales", "D": "Descartes", "E": "Democritus"}, "answer": "A"}, {"id": 498, "question": "The science about future is known as:", "options": {"A": "Futurology", "B": "Sociology", "C": "Ontology", "D": "Cosmology", "E": "Axiology"}, "answer": "A"}, {"id": 499, "question": "The science of beauty:", "options": {"A": "ethics", "B": "aesthetics", "C": "logic", "D": "ontology", "E": "axiology"}, "answer": "B"}, {"id": 500, "question": "The science of moral is known as:", "options": {"A": "Ethics", "B": "Futurology", "C": "Sociology", "D": "Ontology", "E": "Cosmology"}, "answer": "A"}, {"id": 501, "question": "The science of values is known as:", "options": {"A": "Cosmology", "B": "Futurology", "C": "Sociology", "D": "Ontology", "E": "Axiology"}, "answer": "E"}, {"id": 502, "question": "The science on forms, laws and ways of thinking:", "options": {"A": "logic", "B": "axiology", "C": "ontology", "D": "epistemology", "E": "logistics"}, "answer": "A"}, {"id": 503, "question": "The science on forms, laws and ways of thinking:", "options": {"A": "logistic", "B": "axiology", "C": "ontology", "D": "epistemology", "E": "logic"}, "answer": "E"}, {"id": 504, "question": "The set of beliefs, values, technical means adopted by the scientific community and providing a scientific tradition.", "options": {"A": "scientific paradigms", "B": "scientific theories", "C": "scientific schemes", "D": "Scientific revolutions", "E": "scientific experiments"}, "answer": "A"}, {"id": 505, "question": "The sphere of philosophical knowledge about human being:", "options": {"A": "Anthropology", "B": "epistemology", "C": "axiology", "D": "ontology", "E": "logic"}, "answer": "A"}, {"id": 506, "question": "The sphere of philosophical knowledge directed to the study of the fundamental foundations of human existence:", "options": {"A": "philosophical anthropology", "B": "epistemology", "C": "axiology", "D": "ontology", "E": "logic"}, "answer": "A"}, {"id": 507, "question": "The sphere of philosophical knowledge directed to the study of the fundamental foundations of human existence:", "options": {"A": "philosophical anthropology", "B": "epistemology", "C": "axiology", "D": "ontology", "E": "logic"}, "answer": "A"}, {"id": 508, "question": "The standard of something when compared to other things like it, how good or bad something is:", "options": {"A": "quality", "B": "quantity", "C": "property", "D": "measure", "E": "space"}, "answer": "A"}, {"id": 509, "question": "The statement \"If existence really precedes essence, then a person is responsible for what he is\" characterizes:", "options": {"A": "existentialism", "B": "psychoanalysis", "C": "philosophy of life", "D": "Philosophical anthropology", "E": "Pragmatism"}, "answer": "A"}, {"id": 510, "question": "The statement \"If existence really precedes essence, then a person is responsible for what he is \" characterizes:", "options": {"A": "existentialism", "B": "psychoanalysis", "C": "philosophy of life", "D": "Philosophical anthropology", "E": "Pragmatism"}, "answer": "A"}, {"id": 511, "question": "The study concerned about the nature and grounds of knowledge and its validity is:", "options": {"A": "Epistemology", "B": "Metaphysics", "C": "Political Science", "D": "Natural Science", "E": "Axiology"}, "answer": "A"}, {"id": 512, "question": "The study of ethical issues of medical policy and practice, environment, well-being and public health, arising from advances in biology, medicine and technology:", "options": {"A": "bioethics", "B": "medical humanitarianism", "C": "normative ethics", "D": "applied ethics", "E": "ethics of care"}, "answer": "A"}, {"id": 513, "question": "The study of goodness, right and wrong, justice, beauty, moral and virtue is:", "options": {"A": "Ethics", "B": "Empiricists", "C": "Eidos", "D": "Epistemology", "E": "Euristics"}, "answer": "A"}, {"id": 514, "question": "The subject of the study of social philosophy:", "options": {"A": "Nature", "B": "Cognition", "C": "Genesis", "D": "Consciousness", "E": "Society"}, "answer": "E"}, {"id": 515, "question": "The subject of the study of social philosophy:", "options": {"A": "Nature", "B": "Cognition", "C": "Genesis", "D": "Consciousness", "E": "Society"}, "answer": "E"}, {"id": 516, "question": "The subject of the study of social philosophy:", "options": {"A": "Nature", "B": "Cognition", "C": "Genesis", "D": "Consciousness", "E": "Society"}, "answer": "E"}, {"id": 517, "question": "The subject of the study of social philosophy:", "options": {"A": "Nature", "B": "Cognition", "C": "Genesis", "D": "Consciousness", "E": "Society"}, "answer": "E"}, {"id": 518, "question": "The term \"axial time\" was proposed by:", "options": {"A": "K. Jaspers", "B": "K. Popper", "C": "A. Camus", "D": "J. Derrida", "E": "M. Heidegger"}, "answer": "A"}, {"id": 519, "question": "The term \"demarcation\" between science and psevdosciense means:", "options": {"A": "Separation of religious knowledge from mythological knowledge", "B": "Separation of scientific knowledge from non-scientific knowledge", "C": "Separation of the conscious level from the unconscious level", "D": "Separation of rational knowledge from irrational knowledge", "E": "Separation of empirical knowledge from rational knowledge"}, "answer": "B"}, {"id": 520, "question": "The term \"demarcation\" between science and psevdosciense means:", "options": {"A": "Separation of religious knowledge from mythological knowledge", "B": "Separation of scientific knowledge from non-scientific knowledge", "C": "Separation of the conscious level from the unconscious level", "D": "Separation of rational knowledge from irrational knowledge", "E": "Separation of empirical knowledge from rational knowledge"}, "answer": "B"}, {"id": 521, "question": "The thinkers of Milesian School were the thinkers of", "options": {"A": "Nature", "B": "metaphysics", "C": "religion", "D": "faith", "E": "truth"}, "answer": "A"}, {"id": 522, "question": "The third law of dialectics:", "options": {"A": "the law of gravity", "B": "Law of conservation of matter and energy", "C": "The law of the excluded middle", "D": "Law of sufficient reason", "E": "The law of negation of negation"}, "answer": "E"}, {"id": 523, "question": "The thought that \"ethics is nothing else than reverence for life\" belongs to:", "options": {"A": "Albert Schweitzer", "B": "Leo Tolstoy", "C": "Mahatma Gandhi", "D": "Korkyt Ata", "E": "Deni Diderot"}, "answer": "A"}, {"id": 524, "question": "The value aspects expresses:", "options": {"A": "Ontology", "B": "Epistemology", "C": "Epistemology", "D": "Futurology", "E": "Axiology"}, "answer": "E"}, {"id": 525, "question": "The will to power is the central category of:", "options": {"A": "Popper", "B": "Freud", "C": "Yung", "D": "Marx", "E": "Nietzsche"}, "answer": "E"}, {"id": 526, "question": "The work \"The structure of scientific revolutions\" was written by postpositivist:", "options": {"A": "K. Popper", "B": "T. Adorno", "C": "J. Habermas", "D": "T. Kuhn", "E": "L. Wittgenstein"}, "answer": "D"}, {"id": 527, "question": "The ‘demonism of technology’ means:", "options": {"A": "Deification and worship of technology", "B": "The relationship between religion and technology", "C": "Technical foundations of religious beliefs", "D": "Religious grounds of technology", "E": "The unpredictable destructive consequences of its use for man, society and all mankind, its harmful effects on nature."}, "answer": "E"}, {"id": 528, "question": "Thinker who reasoned that utility is equal to happiness and the ultimate goal is to find \"the greatest amount of good for the greatest number of people\":", "options": {"A": "J. Bentham", "B": "J.S. Mill", "C": "I. Kant", "D": "Ch.S. Peirce", "E": "J. Habermas"}, "answer": "A"}, {"id": 529, "question": "Thinker, who linked the origin of capitalism with the protestant ethics:", "options": {"A": "A. Comte", "B": "M. Weber", "C": "T. Kuhn", "D": "M. Foucault", "E": "I. Kant"}, "answer": "B"}, {"id": 530, "question": "This function is that philosophy develops the basic methods of cognition of the reality:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "B"}, {"id": 531, "question": "This function of philosophy asserts the consciously normative attitude of a person to himself and to other people:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "C"}, {"id": 532, "question": "This function of philosophy brings up certain interests and ideals in a person, which determine the motives of his behavior and the achievement of his goals:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "E"}, {"id": 533, "question": "This function of philosophy is to develop a worldview position:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "A"}, {"id": 534, "question": "This function of philosophy teaches us to recognize the values of the surrounding world:", "options": {"A": "The worldview function", "B": "The methodological function", "C": "The moral function", "D": "The axiological function", "E": "The motivational function"}, "answer": "D"}, {"id": 535, "question": "This philosopher and scientist told about the hypertrophied development of science:", "options": {"A": "Ernest Rutherford", "B": "Richard Dawkins", "C": "Isaak Newton", "D": "Bertrand Russell", "E": "Gottfried Leibniz"}, "answer": "D"}, {"id": 536, "question": "This philosophy calls for enduring what cannot be changed and for maintaining abstinence from temptation:", "options": {"A": "stoicism", "B": "Epicureanism", "C": "quietism", "D": "quakerism", "E": "providentialism"}, "answer": "A"}, {"id": 537, "question": "To the question: \"What is difficult?\" Thales replied:", "options": {"A": "to know God", "B": "to know thyself", "C": "to give advices to others", "D": "to know the essence of things", "E": "to overcome the need"}, "answer": "B"}, {"id": 538, "question": "Transition from the general to the specific knowledge:", "options": {"A": "induction", "B": "analysis", "C": "deduction", "D": "abstracting", "E": "synthesis"}, "answer": "C"}, {"id": 539, "question": "Two main parts of philosophy:", "options": {"A": "Sophistry, eclecticism, dogmatism", "B": "Monism, dualism, pluralism", "C": "Sociology, political science, cultural studies", "D": "Ontology, Epistemology", "E": "Mythology, religion, philosophy"}, "answer": "D"}, {"id": 540, "question": "Understanding of facts, information, descriptions, which is acquired through:", "options": {"A": "experience", "B": "Knowledge", "C": "Stereotype", "D": "Work", "E": "Misunderstanding"}, "answer": "B"}, {"id": 541, "question": "Understanding of facts, information, descriptions, which is acquired through:", "options": {"A": "Experience", "B": "Knowledge", "C": "Stereotype", "D": "Work", "E": "Misunderstanding"}, "answer": "B"}, {"id": 542, "question": "View that after the death the human beings live again in other forms:", "options": {"A": "Reincarnation", "B": "Fetishism", "C": "Animism", "D": "Religion", "E": "Syncretism"}, "answer": "A"}, {"id": 543, "question": "View that after the death the human beings live again in other forms:", "options": {"A": "Reincarnation", "B": "Fetishism", "C": "Animism", "D": "Religion", "E": "Syncretism"}, "answer": "A"}, {"id": 544, "question": "Western attitude towards Middle Eastern, Asian and African societies that characterizes these societies as static and undeveloped:", "options": {"A": "medievalism", "B": "westernism", "C": "orientalism", "D": "occidentalism", "E": "medievistics"}, "answer": "C"}, {"id": 545, "question": "What does Buddha mean in Sanskrit?", "options": {"A": "Dark", "B": "Smart", "C": "Enlightened", "D": "Universal", "E": "Statue"}, "answer": "C"}, {"id": 546, "question": "What does Buddha mean in Sanskrit?", "options": {"A": "Dark", "B": "Smart", "C": "Enlightened", "D": "Universal", "E": "Statue"}, "answer": "C"}, {"id": 547, "question": "What does humanism mean?", "options": {"A": "philanthropy", "B": "love for god", "C": "love for knowledge", "D": "love of wisdom", "E": "love for truth"}, "answer": "A"}, {"id": 548, "question": "What does humanism mean?", "options": {"A": "love for knowledge", "B": "love for god", "C": "philanthropy", "D": "love of wisdom", "E": "love for truth"}, "answer": "C"}, {"id": 549, "question": "What does Maya mean:", "options": {"A": "Illusion", "B": "rebirth of souls", "C": "fate", "D": "action", "E": "practice"}, "answer": "A"}, {"id": 550, "question": "What does the Greek word “Logos” mean?", "options": {"A": "science", "B": "goal", "C": "religion", "D": "idea", "E": "subject"}, "answer": "A"}, {"id": 551, "question": "What is common between myth, religion and philosophy:", "options": {"A": "reflection", "B": "world outlook", "C": "scientific approach", "D": "rationalism", "E": "agnosticism"}, "answer": "B"}, {"id": 552, "question": "What is logic? Study of reasoning and argument", "options": {"A": "study of nature", "B": "study of cognition", "C": "study of morality", "D": "methaphysics"}, "answer": "A"}, {"id": 553, "question": "What is Philosophy The study that seeks to understand the mysteries of existence and reality", "options": {"A": "the suty of nature", "B": "the study of man", "C": "the sudy of cognition", "D": "the study of stars"}, "answer": "A"}, {"id": 554, "question": "What is the main term of Hegel?:", "options": {"A": "The Brightness", "B": "The Absolute Spirit", "C": "The Ultimate", "D": "The Boundless", "E": "The Perfection"}, "answer": "B"}, {"id": 555, "question": "What is the meaning of the term Philosophy?", "options": {"A": "Love of wisdom", "B": "Love of Idea", "C": "Love of thinking", "D": "Love of Science", "E": "Love of Truth"}, "answer": "A"}, {"id": 556, "question": "What is the principle of \"Siao\":", "options": {"A": "philanthropy", "B": "etiquette", "C": "energy", "D": "servility", "E": "Respect for elders"}, "answer": "E"}, {"id": 557, "question": "What is the study concerned with the nature of society?", "options": {"A": "Political philosophy", "B": "Ethics", "C": "politics", "D": "psychology", "E": "Axiology"}, "answer": "A"}, {"id": 558, "question": "What is the translation of the word “religio” from Latin?", "options": {"A": "bind, connect", "B": "person", "C": "faith, cult", "D": "worshiping", "E": "idol"}, "answer": "A"}, {"id": 559, "question": "What is the translation of the word “religio” from Latin?", "options": {"A": "worshiping", "B": "person", "C": "faith, cult", "D": "bind, connect", "E": "idol"}, "answer": "D"}, {"id": 560, "question": "What philosophical direction “Space and time are forms of our perception” belong to:", "options": {"A": "Materialism", "B": "Objective idealism", "C": "Subjective idealism", "D": "dialectical materialism", "E": "mechanistic materialism"}, "answer": "C"}, {"id": 561, "question": "What principle is opposite to verification?", "options": {"A": "falsification", "B": "verification", "C": "stimulation", "D": "regeneration", "E": "generalization"}, "answer": "A"}, {"id": 562, "question": "Which is the branch of philosophy that studies issues concerning art and beauty?", "options": {"A": "Aesthetics", "B": "Epistemology", "C": "Logic", "D": "Metaphysics", "E": "Moral"}, "answer": "A"}, {"id": 563, "question": "Which is the branch of philosophy that studies issues concerning art and beauty?", "options": {"A": "Logic", "B": "Epistemology", "C": "Aesthetics", "D": "Metaphysics", "E": "Moral"}, "answer": "C"}, {"id": 564, "question": "Which Pre-Socratic philosopher claimed everything was made of atoms?", "options": {"A": "Parmenides", "B": "Thales", "C": "Pythagoras", "D": "Democritus", "E": "Heraclitus"}, "answer": "D"}, {"id": 565, "question": "who advocated theory of atoms", "options": {"A": "Democritus", "B": "Thales", "C": "Plato", "D": "Aristotle", "E": "Alexander"}, "answer": "A"}, {"id": 566, "question": "Who claimed “God is dead and we killed him”?:", "options": {"A": "Hegel", "B": "Kierkegaard", "C": "Nietzsche", "D": "Freud", "E": "Schopenhauer"}, "answer": "C"}, {"id": 567, "question": "Who coined the term \"philosophy\"?", "options": {"A": "Pythagoras", "B": "Protagoras", "C": "Plato", "D": "Aristotle", "E": "Socrates"}, "answer": "A"}, {"id": 568, "question": "Who discovered 5 causes of God", "options": {"A": "St. Thomas Aquinas", "B": "Plato", "C": "Phenomenon", "D": "Socrates", "E": "Richard Rorty"}, "answer": "A"}, {"id": 569, "question": "Who distinguished world of ideas and physical world?", "options": {"A": "Plato", "B": "Aristotle", "C": "Descartes", "D": "Richard Rorty", "E": "Romans"}, "answer": "A"}, {"id": 570, "question": "Who has been looking for “Zheruyyk” (the promised land) all his life:", "options": {"A": "Shalkiiz-zhyrau", "B": "Asan-kaigy", "C": "Bukhar-zhyrau", "D": "Dospambet-zhyrau", "E": "Akan-seri"}, "answer": "B"}, {"id": 571, "question": "Who has been looking for “Zheruyyk” (the promised land) all his life:", "options": {"A": "Shalkiiz-zhyrau", "B": "Asan kaigy", "C": "Bukhar-zhyrau", "D": "Dospambet-zhyrau", "E": "Akan seri"}, "answer": "B"}, {"id": 572, "question": "Who introduced sophisms ?", "options": {"A": "Protagoras", "B": "Thales", "C": "Pythogoras", "D": "Plato", "E": "Alexander"}, "answer": "A"}, {"id": 573, "question": "Who introduced the concept of \"archetype\" into psychoanalysis:", "options": {"A": "E. Fromm", "B": "K. Jung", "C": "Z. Freud", "D": "F. Nietzsche", "E": "A. Schopenhauer"}, "answer": "B"}, {"id": 574, "question": "Who introduced the concept of \"borderline situation\" into philosophy?", "options": {"A": "J.-P. Sartre", "B": "A.Camus", "C": "K.Jaspers", "D": "G.Marcel", "E": "M.Heidegger"}, "answer": "C"}, {"id": 575, "question": "Who introduced the concept of \"borderline situation\" into philosophy?", "options": {"A": "J.-P. Sartre", "B": "A.Camus", "C": "K.Jaspers", "D": "G.Marcel", "E": "M.Heidegger"}, "answer": "C"}, {"id": 576, "question": "Who invented the dialectic method of finding truth throught conversation", "options": {"A": "Socrates", "B": "Plato", "C": "Aristotle", "D": "Descartes", "E": "Hellenistic"}, "answer": "A"}, {"id": 577, "question": "Who is a philosopher?", "options": {"A": "Lover and pursuer of wisdom", "B": "Someone who studies the stars and planets", "C": "person primarily interested in the truth about moral matters", "D": "A clever and tricky arguer", "E": "A person that attempt to resolve any questions"}, "answer": "A"}, {"id": 578, "question": "Who is a philosopher?", "options": {"A": "A person that attempt to resolve any questions", "B": "Someone who studies the stars and planets", "C": "Person primarily interested in the truth about moral matters", "D": "A clever and tricky arguer", "E": "Lover and pursuer of wisdom"}, "answer": "E"}, {"id": 579, "question": "Who is philosopher - encyclopedist", "options": {"A": "Aristotele", "B": "Pythogoras", "C": "Plato", "D": "Socrates", "E": "Democritus"}, "answer": "A"}, {"id": 580, "question": "Who is the author of the doctrine of Maieutics", "options": {"A": "Socrates", "B": "Plato", "C": "Thales", "D": "Descartes", "E": "Alexander"}, "answer": "A"}, {"id": 581, "question": "Who is the founder of objective idealism", "options": {"A": "Plato", "B": "Aristotele", "C": "Thales", "D": "Abai", "E": "Democritus"}, "answer": "A"}, {"id": 582, "question": "who said \"Know youself\"", "options": {"A": "Socrates", "B": "Descartes", "C": "Thales", "D": "ABAI", "E": "Democritus"}, "answer": "A"}, {"id": 583, "question": "Who said \"Two things always fill the soul with new and ever stronger wonder - this is the Starry Sky above Me and the Moral Law in Me\"", "options": {"A": "I.Kant", "B": "Socrates", "C": "Aristotle", "D": "Plato", "E": "Abai"}, "answer": "A"}, {"id": 584, "question": "Who said number is the essence and basis of all things?", "options": {"A": "Pythagoras", "B": "Descartes", "C": "Thales", "D": "Socrates", "E": "Plato"}, "answer": "A"}, {"id": 585, "question": "Who said «Philosophy begins with wonder»", "options": {"A": "Aristotele", "B": "Thales", "C": "Plato", "D": "Socrates", "E": "Descartes"}, "answer": "A"}, {"id": 586, "question": "Who said “Educating the mind without educating the heart is no education at all.”", "options": {"A": "Aristotele", "B": "Thales", "C": "Plato", "D": "Descartes", "E": "Socrates"}, "answer": "A"}, {"id": 587, "question": "Who said, that which does not kill me makes me stronger?:", "options": {"A": "John Locke", "B": "Friedrich Nietzsche", "C": "Bertrand Russell", "D": "Thomas Aquinas", "E": "Blaze Pascal"}, "answer": "B"}, {"id": 588, "question": "Who said: \"There is beauty in everything, but not everyone will see?\":", "options": {"A": "Democritus", "B": "Socrates", "C": "Thales", "D": "Confucius", "E": "Heraclitus"}, "answer": "D"}, {"id": 589, "question": "Who said: “Religion is the opium of the masses”?:", "options": {"A": "Marx", "B": "Kierkegaard", "C": "Nietzsche", "D": "Freud", "E": "Schopenhauer"}, "answer": "A"}, {"id": 590, "question": "Who was called the \"Second Teacher\" in world philosophy:", "options": {"A": "Al-Ghazali", "B": "Al-Farabi", "C": "Al-Biruni", "D": "Al-Khwarizmi", "E": "Al-Kindi"}, "answer": "B"}, {"id": 591, "question": "Who was called the \"Second Teacher\" in world philosophy:", "options": {"A": "Al-Ghazali", "B": "Al-Farabi", "C": "Al-Biruni", "D": "Al-Khwarizmi", "E": "Al-Kindi"}, "answer": "B"}, {"id": 592, "question": "Who was the first Milesian materialistic philosopher", "options": {"A": "Thales", "B": "Heraclitus", "C": "Anaximander", "D": "Socrates", "E": "Plato"}, "answer": "A"}, {"id": 593, "question": "Who was the first philosopher - mathematician", "options": {"A": "Pythogoras", "B": "Leibnitz", "C": "Aristotele", "D": "Plato", "E": "Socrates"}, "answer": "A"}, {"id": 594, "question": "«The highest form of wisdom is kindness» was written in", "options": {"A": "Talmud", "B": "Old Testament", "C": "New Testament", "D": "Veda", "E": "Bible"}, "answer": "A"}, {"id": 595, "question": "“Cognition is the recollection of the ideas that soul had once beheld”, affirms:", "options": {"A": "Epicurus", "B": "Aristotle", "C": "Plato", "D": "Socrates", "E": "Pythagoras"}, "answer": "C"}, {"id": 596, "question": "“Don’t harm the living, sentient beings” is the commandment of:", "options": {"A": "ahimsa", "B": "moksha", "C": "samsara", "D": "karma", "E": "nirvana"}, "answer": "A"}, {"id": 597, "question": "“I do not agree with what you have to say, but I’ll defend to the death your right to say it”, said:", "options": {"A": "Voltaire", "B": "Abai", "C": "Aristotle", "D": "Socrates", "E": "Cicero"}, "answer": "A"}, {"id": 598, "question": "“I do not agree with what you have to say, but I’ll defend to the death your right to say it”, said:", "options": {"A": "Cicero", "B": "Abai", "C": "Aristotle", "D": "Socrates", "E": "Voltaire"}, "answer": "E"}, {"id": 599, "question": "“Knowledge comes only or primarily from sensory experience”:", "options": {"A": "skepticism", "B": "rationalism", "C": "agnosticism", "D": "phenomenology", "E": "empiricism"}, "answer": "E"}, {"id": 600, "question": "“Motion is unthinkable” – assumed:", "options": {"A": "Thales", "B": "Heraclitus of Ephesus", "C": "Zeno of Elea", "D": "Diogenes of Sinope", "E": "Pythagoras of Samos"}, "answer": "C"}, {"id": 601, "question": "“Nothing is morally right or wrong because there are no moral features in this world; thus, no moral judgments are true”:", "options": {"A": "moral nihilism", "B": "moral relativism", "C": "moral objectivism", "D": "moral ignorance", "E": "moral eliminativism"}, "answer": "A"}];
+
+    const state = {
+      mode: 'practice',
+      currentQuestion: null,
+      currentIndex: 0,
+      selectedOption: null,
+      practiceStats: {
+        correct: 0,
+        attempted: 0
+      },
+      exam: {
+        active: false,
+        questions: [],
+        currentIndex: 0,
+        answers: [],
+        correctCount: 0,
+        timerSeconds: 0,
+        timerInterval: null
+      }
+    };
+
+    const els = {
+      modeButtons: document.querySelectorAll('.mode-btn'),
+      modeLabelPrefix: document.getElementById('mode-label-prefix'),
+      modeDescription: document.getElementById('mode-description'),
+      questionCounter: document.getElementById('question-counter'),
+      questionId: document.getElementById('question-id'),
+      questionText: document.getElementById('question-text'),
+      optionsList: document.getElementById('options-list'),
+      statusDot: document.getElementById('status-dot'),
+      statusText: document.getElementById('status-text'),
+      practiceButtons: document.getElementById('practice-buttons'),
+      examButtons: document.getElementById('exam-buttons'),
+      btnCheck: document.getElementById('btn-check'),
+      btnNext: document.getElementById('btn-next'),
+      btnReveal: document.getElementById('btn-reveal'),
+      btnPrevQ: document.getElementById('btn-prev-q'),
+      btnNextQ: document.getElementById('btn-next-q'),
+      btnFinishExam: document.getElementById('btn-finish-exam'),
+      statCorrect: document.getElementById('stat-correct'),
+      statAttempted: document.getElementById('stat-attempted'),
+      statScore: document.getElementById('stat-score'),
+      progressCorrect: document.getElementById('progress-correct'),
+      progressAttempted: document.getElementById('progress-attempted'),
+      progressScore: document.getElementById('progress-score'),
+      examSetup: document.getElementById('exam-setup'),
+      examSize: document.getElementById('exam-size'),
+      examTimer: document.getElementById('exam-timer'),
+      btnStartExam: document.getElementById('btn-start-exam'),
+      examStatusText: document.getElementById('exam-status-text'),
+      examTimerDisplay: document.getElementById('exam-timer-display'),
+      examResults: document.getElementById('exam-results'),
+      timerLabel: document.getElementById('timer-label')
+    };
+
+    function shuffle(array) {
+      const arr = array.slice();
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+      }
+      return arr;
+    }
+
+    function pickRandomQuestion() {
+      const idx = Math.floor(Math.random() * QUESTIONS.length);
+      state.currentIndex = idx;
+      state.currentQuestion = QUESTIONS[idx];
+    }
+
+    function renderQuestion() {
+      const q = state.currentQuestion;
+      if (!q) return;
+
+      els.questionId.textContent = (q.id !== undefined && q.id !== null) ? q.id : (state.currentIndex + 1);
+
+      let total;
+      if (state.mode === 'exam' && state.exam.active) {
+        total = state.exam.questions.length;
+      } else {
+        total = QUESTIONS.length;
+      }
+
+      let indexDisplay;
+      if (state.mode === 'exam' && state.exam.active) {
+        indexDisplay = state.exam.currentIndex + 1;
+      } else {
+        indexDisplay = state.currentIndex + 1;
+      }
+
+      els.questionCounter.textContent = 'Question ' + indexDisplay + ' / ' + total;
+
+      els.questionText.textContent = q.question;
+
+      els.optionsList.innerHTML = '';
+      state.selectedOption = null;
+
+      const entries = Object.entries(q.options || {});
+
+      entries.forEach(function(pair) {
+        const key = pair[0];
+        const text = pair[1];
+
+        const li = document.createElement('li');
+        li.className = 'option-item';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option-button';
+        btn.dataset.option = key;
+
+        const label = document.createElement('div');
+        label.className = 'option-label';
+        label.textContent = key;
+
+        const contentSpan = document.createElement('span');
+        contentSpan.textContent = text;
+
+        const ghostSpan = document.createElement('span');
+        ghostSpan.style.fontSize = '11px';
+        ghostSpan.style.opacity = '0.7';
+        ghostSpan.textContent = '';
+
+        btn.appendChild(contentSpan);
+        btn.appendChild(ghostSpan);
+
+        btn.addEventListener('click', function() {
+          state.selectedOption = key;
+          document.querySelectorAll('.option-button').forEach(function(b) {
+            b.classList.remove('selected');
+          });
+          btn.classList.add('selected');
+          setStatus('pending', 'Selected option ' + key + '. Now press “Check answer”.');
+        });
+
+        li.appendChild(label);
+        li.appendChild(btn);
+        els.optionsList.appendChild(li);
+      });
+
+      if (state.mode === 'exam') {
+        els.statusDot.className = 'status-dot warn';
+        els.statusText.textContent = 'Exam mode: answers are hidden until the end.';
+      } else {
+        els.statusDot.className = 'status-dot';
+        els.statusText.textContent = 'Choose an option and press “Check answer”.';
+      }
+    }
+
+    function setStatus(type, message) {
+      els.statusText.textContent = message;
+      if (type === 'ok') {
+        els.statusDot.className = 'status-dot';
+      } else if (type === 'warn') {
+        els.statusDot.className = 'status-dot warn';
+      } else if (type === 'error') {
+        els.statusDot.className = 'status-dot error';
+      } else {
+        els.statusDot.className = 'status-dot';
+      }
+    }
+
+    function updateStats() {
+      const correct = state.practiceStats.correct;
+      const attempted = state.practiceStats.attempted;
+      const score = attempted ? Math.round((correct / attempted) * 100) : 0;
+
+      els.statCorrect.textContent = correct;
+      els.statAttempted.textContent = attempted;
+      els.statScore.textContent = score + '%';
+
+      const attemptedRatio = attempted ? (attempted / QUESTIONS.length) * 100 : 0;
+      const correctRatio = attempted ? (correct / attempted) * 100 : 0;
+
+      els.progressAttempted.style.width = Math.min(attemptedRatio, 100) + '%';
+      els.progressCorrect.style.width = correctRatio + '%';
+      els.progressScore.style.width = score + '%';
+    }
+
+    function handlePracticeCheck() {
+      if (!state.selectedOption) {
+        setStatus('warn', 'Please select an option first.');
+        return;
+      }
+      const q = state.currentQuestion;
+      const correctOption = q.answer;
+
+      const buttons = document.querySelectorAll('.option-button');
+      buttons.forEach(function(btn) {
+        const key = btn.dataset.option;
+        if (key === correctOption) {
+          btn.classList.add('correct');
+        }
+        if (key === state.selectedOption && key !== correctOption) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      const isCorrect = state.selectedOption === correctOption;
+      state.practiceStats.attempted += 1;
+      if (isCorrect) {
+        state.practiceStats.correct += 1;
+        setStatus('ok', '✅ Correct! Great job.');
+      } else {
+        setStatus('error', '❌ Not quite. Correct answer is ' + correctOption + '.');
+      }
+      updateStats();
+    }
+
+    function handlePracticeReveal() {
+      const q = state.currentQuestion;
+      if (!q) return;
+      const correctOption = q.answer;
+      document.querySelectorAll('.option-button').forEach(function(btn) {
+        const key = btn.dataset.option;
+        if (key === correctOption) {
+          btn.classList.add('correct');
+        }
+      });
+      setStatus('ok', 'Correct answer revealed: ' + correctOption + '.');
+    }
+
+    function handlePracticeNext() {
+      pickRandomQuestion();
+      renderQuestion();
+    }
+
+    function startExam() {
+      const sizeValue = els.examSize.value;
+      const timerValue = parseInt(els.examTimer.value, 10);
+
+      let count;
+      if (sizeValue === 'all') {
+        count = QUESTIONS.length;
+      } else {
+        count = parseInt(sizeValue, 10);
+      }
+      if (count > QUESTIONS.length) count = QUESTIONS.length;
+
+      state.exam.questions = shuffle(QUESTIONS).slice(0, count);
+      state.exam.answers = new Array(count).fill(null);
+      state.exam.currentIndex = 0;
+      state.exam.correctCount = 0;
+      state.exam.active = true;
+
+      state.mode = 'exam';
+      els.modeButtons.forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.mode === 'exam');
+      });
+      els.modeLabelPrefix.textContent = 'Exam';
+      els.modeDescription.textContent = 'Full exam simulation';
+      els.practiceButtons.style.display = 'none';
+      els.examButtons.style.display = 'flex';
+      els.examSetup.style.opacity = '0.5';
+      els.examSetup.style.pointerEvents = 'none';
+      els.examResults.style.display = 'none';
+      els.timerLabel.textContent = 'Exam timer';
+
+      if (state.exam.timerInterval) {
+        clearInterval(state.exam.timerInterval);
+      }
+      state.exam.timerSeconds = timerValue * 60;
+      if (timerValue > 0) {
+        els.examStatusText.textContent = 'Timer is running. Good luck!';
+        updateExamTimerDisplay();
+        state.exam.timerInterval = setInterval(function() {
+          if (state.exam.timerSeconds > 0) {
+            state.exam.timerSeconds -= 1;
+            updateExamTimerDisplay();
+          } else {
+            clearInterval(state.exam.timerInterval);
+            els.examStatusText.textContent = 'Time is up! Exam finished automatically.';
+            finishExam();
+          }
+        }, 1000);
+      } else {
+        els.examStatusText.textContent = 'No timer. Take your time, but imagine you are in the real exam.';
+        els.examTimerDisplay.textContent = '—';
+      }
+
+      loadExamQuestion();
+    }
+
+    function updateExamTimerDisplay() {
+      const t = state.exam.timerSeconds;
+      const m = Math.floor(t / 60);
+      const s = t % 60;
+      const mm = String(m).padStart(2, '0');
+      const ss = String(s).padStart(2, '0');
+      els.examTimerDisplay.textContent = mm + ':' + ss;
+    }
+
+    function loadExamQuestion() {
+      const idx = state.exam.currentIndex;
+      const q = state.exam.questions[idx];
+      state.currentQuestion = q;
+      state.currentIndex = idx;
+
+      const currentAnswer = state.exam.answers[idx];
+      renderQuestion();
+
+      if (currentAnswer && currentAnswer.chosen) {
+        state.selectedOption = currentAnswer.chosen;
+        document.querySelectorAll('.option-button').forEach(function(btn) {
+          if (btn.dataset.option === currentAnswer.chosen) {
+            btn.classList.add('selected');
+          }
+        });
+      }
+
+      els.statusText.textContent = 'Select an option. Answers will be checked when you finish the exam.';
+      els.statusDot.className = 'status-dot warn';
+    }
+
+    function saveExamAnswer() {
+      if (!state.exam.active) return;
+      if (!state.selectedOption) return;
+      const idx = state.exam.currentIndex;
+      const q = state.exam.questions[idx];
+      state.exam.answers[idx] = {
+        chosen: state.selectedOption,
+        correct: q.answer
+      };
+      els.statusText.textContent = 'Answer saved for this question.';
+      els.statusDot.className = 'status-dot';
+    }
+
+    function finishExam() {
+      if (!state.exam.active) return;
+      if (state.exam.timerInterval) {
+        clearInterval(state.exam.timerInterval);
+        state.exam.timerInterval = null;
+      }
+
+      let correctCount = 0;
+      state.exam.answers.forEach(function(a) {
+        if (a && a.chosen === a.correct) correctCount += 1;
+      });
+      state.exam.correctCount = correctCount;
+      const total = state.exam.questions.length;
+      const score = total ? Math.round((correctCount / total) * 100) : 0;
+
+      state.mode = 'exam';
+      state.exam.active = false;
+
+      els.examSetup.style.opacity = '1';
+      els.examSetup.style.pointerEvents = 'auto';
+      els.examStatusText.textContent = 'Exam finished. See detailed report below.';
+      els.timerLabel.textContent = 'Summary';
+      els.examTimerDisplay.textContent = correctCount + ' / ' + total + ' (' + score + '%)';
+
+      const report = document.createElement('div');
+      state.exam.questions.forEach(function(q, idx) {
+        const ans = state.exam.answers[idx];
+        const item = document.createElement('div');
+        item.className = 'exam-result-item';
+
+        const header = document.createElement('div');
+        header.className = 'exam-result-header';
+
+        const title = document.createElement('div');
+        title.className = 'exam-result-q';
+        title.textContent = (idx + 1) + '. ' + q.question;
+
+        const tags = document.createElement('div');
+        tags.className = 'exam-result-tags';
+
+        const tagIdx = document.createElement('span');
+        tagIdx.className = 'tag';
+        const displayId = (q.id !== undefined && q.id !== null) ? q.id : (idx + 1);
+        tagIdx.textContent = 'QID ' + displayId;
+        tags.appendChild(tagIdx);
+
+        const tagRes = document.createElement('span');
+        const userAns = ans && ans.chosen ? ans.chosen : '—';
+        const cor = q.answer || '—';
+        const ok = ans && ans.chosen === q.answer;
+        tagRes.className = 'tag ' + (ok ? 'ok' : 'bad');
+        tagRes.textContent = (ok ? 'Correct ' : 'Wrong ') + '(' + userAns + ' / ' + cor + ')';
+        tags.appendChild(tagRes);
+
+        header.appendChild(title);
+        header.appendChild(tags);
+
+        const body = document.createElement('div');
+        body.style.fontSize = '11px';
+        body.style.color = '#9ca3af';
+        if (ans && ans.chosen) {
+          body.textContent = 'Correct option: ' + cor + '. Your answer: ' + ans.chosen + '.';
+        } else {
+          body.textContent = 'Correct option: ' + cor + '. You did not answer this question.';
+        }
+
+        item.appendChild(header);
+        item.appendChild(body);
+        report.appendChild(item);
+      });
+
+      els.examResults.innerHTML = '';
+      els.examResults.appendChild(report);
+      els.examResults.style.display = 'block';
+
+      els.statusText.textContent = 'Exam report generated. You can scroll the list of questions on the right.';
+      els.statusDot.className = 'status-dot';
+    }
+
+    function setMode(mode) {
+      if (state.exam.active && mode === 'practice') {
+        const proceed = window.confirm('Exam is running. Switching to practice will not show exam results yet. Continue?');
+        if (!proceed) return;
+      }
+      state.mode = mode;
+      els.modeButtons.forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      if (mode === 'practice') {
+        els.modeLabelPrefix.textContent = 'Practice';
+        els.modeDescription.textContent = 'Instant feedback trainer';
+        els.practiceButtons.style.display = 'flex';
+        els.examButtons.style.display = 'none';
+        els.examStatusText.textContent = 'Exam mode is inactive. You are in practice mode.';
+        els.timerLabel.textContent = 'Practice session';
+        els.examTimerDisplay.textContent = '—';
+        setStatus('ok', 'Practice mode: check answers and reveal correct options.');
+        pickRandomQuestion();
+        renderQuestion();
+      } else {
+        els.modeLabelPrefix.textContent = 'Exam';
+        els.modeDescription.textContent = 'Full exam simulation';
+        els.practiceButtons.style.display = 'none';
+        els.examButtons.style.display = state.exam.active ? 'flex' : 'none';
+        setStatus('warn', 'Exam mode: press “Start exam” on the right to begin.');
+        if (!state.exam.active) {
+          els.questionText.textContent = 'Press “Start exam” to begin a full exam simulation.';
+          els.optionsList.innerHTML = '';
+          els.questionCounter.textContent = 'Exam not started';
+          els.questionId.textContent = '–';
+        }
+      }
+    }
+
+    els.modeButtons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const mode = btn.dataset.mode;
+        setMode(mode);
+      });
+    });
+
+    els.btnCheck.addEventListener('click', handlePracticeCheck);
+    els.btnReveal.addEventListener('click', handlePracticeReveal);
+    els.btnNext.addEventListener('click', handlePracticeNext);
+
+    els.btnStartExam.addEventListener('click', startExam);
+    els.btnPrevQ.addEventListener('click', function() {
+      saveExamAnswer();
+      if (!state.exam.active) return;
+      if (state.exam.currentIndex > 0) {
+        state.exam.currentIndex -= 1;
+        loadExamQuestion();
+      }
+    });
+    els.btnNextQ.addEventListener('click', function() {
+      saveExamAnswer();
+      if (!state.exam.active) return;
+      if (state.exam.currentIndex < state.exam.questions.length - 1) {
+        state.exam.currentIndex += 1;
+        loadExamQuestion();
+      }
+    });
+    els.btnFinishExam.addEventListener('click', function() {
+      saveExamAnswer();
+      const ok = window.confirm('Finish exam and show results?');
+      if (!ok) return;
+      finishExam();
+    });
+
+    pickRandomQuestion();
+    renderQuestion();
+    updateStats();
+  </script>
+</body>
+</html>
