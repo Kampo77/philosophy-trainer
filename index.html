@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Философия — тренировочный тест</title>
+  <title>Philosophy Quiz — Practice & Exam Mode</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -39,7 +39,7 @@
 
     .app {
       width: 100%;
-      max-width: 920px;
+      max-width: 980px;
       padding: 20px;
       display: flex;
       flex-direction: column;
@@ -51,6 +51,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .app-title {
@@ -74,6 +75,68 @@
     .app-subtitle {
       font-size: 0.95rem;
       color: var(--muted);
+      max-width: 520px;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .mode-switch {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .mode-btn {
+      border: none;
+      outline: none;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--muted);
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.08s ease;
+    }
+
+    .mode-btn span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+
+    .mode-btn-active {
+      background: radial-gradient(
+          circle at top left,
+          rgba(129, 140, 248, 0.4),
+          transparent 55%
+        ),
+        linear-gradient(135deg, #1f2937, #020617);
+      color: #e5e7eb;
+      box-shadow:
+        0 8px 18px rgba(15, 23, 42, 0.8),
+        0 0 12px rgba(129, 140, 248, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .mode-btn-active span.dot {
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
     }
 
     .pill {
@@ -199,6 +262,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
     .question-counter {
@@ -233,7 +297,7 @@
       background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(15, 23, 42, 1);
       overflow: hidden;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       position: relative;
     }
 
@@ -246,24 +310,108 @@
       transition: width 0.25s ease-out;
     }
 
+    /* Exam bar */
+
+    .exam-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .exam-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .exam-label {
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .exam-field {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .exam-field span {
+      color: var(--muted);
+    }
+
+    .exam-select {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 3px 7px;
+      font-size: 0.8rem;
+      color: var(--text);
+      outline: none;
+    }
+
+    .exam-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .exam-status {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .exam-status-pill {
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .exam-timer {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 0.82rem;
+      border-radius: 999px;
+      padding: 3px 9px;
+      border: 1px solid rgba(248, 250, 252, 0.4);
+      background: radial-gradient(
+          circle at top left,
+          rgba(248, 113, 113, 0.3),
+          transparent 55%
+        ),
+        rgba(15, 23, 42, 0.95);
+      color: #fee2e2;
+      box-shadow: 0 0 12px rgba(248, 113, 113, 0.8);
+    }
+
     .question-text {
       font-size: 1.05rem;
       font-weight: 600;
-      margin: 4px 0 14px;
+      margin: 4px 0 10px;
       line-height: 1.4;
     }
 
     .question-meta {
       font-size: 0.82rem;
       color: var(--muted);
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
 
     .options {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .option {
@@ -413,6 +561,7 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     button.btn {
@@ -552,6 +701,7 @@
       gap: 8px;
       align-items: center;
       padding: 0 4px;
+      flex-wrap: wrap;
     }
 
     .app-footer a {
@@ -576,6 +726,10 @@
         align-items: flex-start;
       }
 
+      .header-right {
+        align-items: flex-start;
+      }
+
       .app-title {
         font-size: 1.15rem;
       }
@@ -587,6 +741,20 @@
       .options {
         gap: 7px;
       }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls-left,
+      .controls-right {
+        justify-content: space-between;
+      }
+
+      .controls-right {
+        justify-content: flex-end;
+      }
     }
   </style>
 </head>
@@ -596,41 +764,87 @@
       <div>
         <div class="app-title">
           <div class="app-title-badge"></div>
-          <span>Философия · Quiz</span>
+          <span>Philosophy · Quiz</span>
         </div>
         <div class="app-subtitle">
-          Тренируйся к тесту: все вопросы подтягиваются из JSON, прогресс и результат считаются автоматически.
+          Use your JSON bank to drill questions in Practice mode or simulate a real Exam with a timer and hidden answers.
         </div>
       </div>
-      <div class="pill">
-        <span class="pill-dot"></span>
-        <span>Режим тренировки</span>
+      <div class="header-right">
+        <div class="mode-switch">
+          <button id="btn-mode-practice" class="mode-btn mode-btn-active">
+            <span class="dot"></span>
+            <span>Practice</span>
+          </button>
+          <button id="btn-mode-exam" class="mode-btn">
+            <span class="dot"></span>
+            <span>Exam</span>
+          </button>
+        </div>
+        <div class="pill">
+          <span class="pill-dot"></span>
+          <span id="mode-pill-text">Practice mode</span>
+        </div>
       </div>
     </header>
 
     <main class="card">
       <div class="card-inner">
-        <!-- Ошибки загрузки / парсинга -->
+        <!-- Errors -->
         <div id="error" class="error" hidden>
-          <div class="error-title">Не удалось загрузить вопросы 😢</div>
+          <div class="error-title">Failed to load questions 😢</div>
           <div id="error-message"></div>
-          <small>Проверь, что файл <strong>philosophy_all_questions.json</strong> лежит рядом с
-            <strong>index.html</strong> и запускай страницу через локальный сервер (например, Live Server в VS Code).</small>
+          <small>
+            Make sure <strong>philosophy_all_questions.json</strong> is in the same folder as
+            <strong>index.html</strong> and open the page via a local server (for example, VS Code Live Server).
+          </small>
         </div>
 
-        <!-- Экран загрузки -->
+        <!-- Loading -->
         <div id="loading" class="loading">
           <div class="spinner"></div>
-          <div>Загружаем вопросы по философии…</div>
+          <div>Loading philosophy questions from JSON…</div>
         </div>
 
-        <!-- Основной квиз -->
+        <!-- Quiz -->
         <div id="quiz" hidden>
           <div class="quiz-header">
             <div class="question-counter" id="question-counter"></div>
             <div class="chip">
               <div class="chip-score-dot"></div>
-              <span id="score-preview">0 / 0 верных</span>
+              <span id="score-preview">No answers yet</span>
+            </div>
+          </div>
+
+          <!-- Exam bar (visible only in Exam mode) -->
+          <div id="exam-bar" class="exam-bar" hidden>
+            <div class="exam-bar-left">
+              <span class="exam-label">Exam settings</span>
+              <div class="exam-field">
+                <span>Questions:</span>
+                <select id="exam-question-count" class="exam-select">
+                  <option value="all">All</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                  <option value="40">40</option>
+                </select>
+              </div>
+              <div class="exam-field">
+                <span>Duration:</span>
+                <select id="exam-duration" class="exam-select">
+                  <option value="0">No limit</option>
+                  <option value="30">30 min</option>
+                  <option value="45">45 min</option>
+                  <option value="60">60 min</option>
+                </select>
+              </div>
+            </div>
+            <div class="exam-bar-right">
+              <div id="exam-status" class="exam-status exam-status-pill">
+                Exam not started
+              </div>
+              <div id="exam-timer" class="exam-timer" hidden>00:00</div>
             </div>
           </div>
 
@@ -645,36 +859,36 @@
 
           <div id="warning" class="warning" hidden>
             <span class="warning-icon">⚠️</span>
-            <span>Сначала выбери вариант ответа.</span>
+            <span>Please select an answer first.</span>
           </div>
 
           <div class="controls">
             <div class="controls-left">
               <button id="btn-prev" class="btn btn-secondary">
-                ⬅ Назад
+                ← Previous
               </button>
               <button id="btn-restart-soft" class="btn btn-secondary">
-                ⟳ Сбросить прогресс
+                ⟳ Reset current run
               </button>
             </div>
             <div class="controls-right">
-              <span class="kbd">Enter — проверить / дальше</span>
+              <span class="kbd">Enter — main action</span>
               <button id="btn-main" class="btn btn-primary">
-                Проверить
+                Check answer
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Финальный результат -->
+        <!-- Result -->
         <div id="result" class="result" hidden>
-          <div class="result-title">Результат прохождения</div>
+          <div class="result-title">Your result</div>
           <div class="result-score">
-            Ты ответил(а) верно на <span id="result-correct"></span> из
-            <span id="result-total"></span> вопросов.
+            Correct answers: <span id="result-correct"></span> /
+            <span id="result-total"></span>
           </div>
           <div class="result-percent">
-            Процент правильных ответов: <span id="result-percent"></span>%
+            Accuracy: <span id="result-percent"></span>%
           </div>
           <div class="result-badge">
             <div class="result-badge-dot"></div>
@@ -682,106 +896,86 @@
           </div>
           <div class="result-details" id="result-details"></div>
           <div class="result-actions">
-            <button id="btn-restart" class="btn btn-primary">Пройти ещё раз</button>
-            <button id="btn-review" class="btn btn-secondary">Посмотреть вопросы</button>
+            <button id="btn-restart" class="btn btn-primary">Restart (same mode)</button>
+            <button id="btn-review" class="btn btn-secondary">Review questions</button>
           </div>
         </div>
       </div>
     </main>
 
     <footer class="app-footer">
-      <span>Файл: <strong>philosophy_all_questions.json</strong></span>
-      <span>Подсказка: можно открыть в браузере через локальный сервер (например, Live Server).</span>
+      <span>Using file: <strong>philosophy_all_questions.json</strong></span>
+      <span>Tip: open this HTML via local server to avoid CORS issues.</span>
     </footer>
   </div>
 
   <script>
-    // ====== ГЛОБАЛЬНОЕ СОСТОЯНИЕ КВИЗА ======
-    const state = {
-      questions: [],
-      currentIndex: 0,
-      answers: [], // { selected: 'A' | 'B' | ... | null, isCorrect: boolean | null }
-      loaded: false
+    // ====== GLOBAL QUIZ STATE ======
+    const MODES = {
+      PRACTICE: "practice",
+      EXAM: "exam",
     };
 
-    // ====== ЭЛЕМЕНТЫ DOM ======
-    const elLoading = document.getElementById('loading');
-    const elError = document.getElementById('error');
-    const elErrorMessage = document.getElementById('error-message');
+    const state = {
+      allQuestions: [],
+      questions: [],
+      currentIndex: 0,
+      answers: [], // { selected: 'A' | ... | null, isCorrect: boolean | null }
+      loaded: false,
+      mode: MODES.PRACTICE,
+      exam: {
+        active: false,
+        finished: false,
+        timedOut: false,
+        totalSeconds: 0,
+        remainingSeconds: 0,
+        timerId: null,
+        config: {
+          questionCount: "all",
+          durationMinutes: 0,
+        },
+      },
+    };
 
-    const elQuiz = document.getElementById('quiz');
-    const elResult = document.getElementById('result');
+    // ====== DOM ELEMENTS ======
+    const elLoading = document.getElementById("loading");
+    const elError = document.getElementById("error");
+    const elErrorMessage = document.getElementById("error-message");
 
-    const elQuestionCounter = document.getElementById('question-counter');
-    const elScorePreview = document.getElementById('score-preview');
-    const elProgressBar = document.getElementById('progress-bar');
-    const elQuestionMeta = document.getElementById('question-meta');
-    const elQuestionText = document.getElementById('question-text');
-    const elOptions = document.getElementById('options');
-    const elWarning = document.getElementById('warning');
+    const elQuiz = document.getElementById("quiz");
+    const elResult = document.getElementById("result");
 
-    const btnPrev = document.getElementById('btn-prev');
-    const btnMain = document.getElementById('btn-main');
-    const btnRestartSoft = document.getElementById('btn-restart-soft');
-    const btnRestart = document.getElementById('btn-restart');
-    const btnReview = document.getElementById('btn-review');
+    const elQuestionCounter = document.getElementById("question-counter");
+    const elScorePreview = document.getElementById("score-preview");
+    const elProgressBar = document.getElementById("progress-bar");
+    const elQuestionMeta = document.getElementById("question-meta");
+    const elQuestionText = document.getElementById("question-text");
+    const elOptions = document.getElementById("options");
+    const elWarning = document.getElementById("warning");
 
-    const elResultCorrect = document.getElementById('result-correct');
-    const elResultTotal = document.getElementById('result-total');
-    const elResultPercent = document.getElementById('result-percent');
-    const elResultLabel = document.getElementById('result-label');
-    const elResultDetails = document.getElementById('result-details');
+    const btnPrev = document.getElementById("btn-prev");
+    const btnMain = document.getElementById("btn-main");
+    const btnRestartSoft = document.getElementById("btn-restart-soft");
+    const btnRestart = document.getElementById("btn-restart");
+    const btnReview = document.getElementById("btn-review");
 
-    // mainMode: 'check' (проверить текущий), 'next' (к следующему), 'finish' (завершить)
-    let mainMode = 'check';
+    const elResultCorrect = document.getElementById("result-correct");
+    const elResultTotal = document.getElementById("result-total");
+    const elResultPercent = document.getElementById("result-percent");
+    const elResultLabel = document.getElementById("result-label");
+    const elResultDetails = document.getElementById("result-details");
 
-    // ====== ЗАГРУЗКА ВОПРОСОВ ИЗ JSON ======
-    async function loadQuestions() {
-      showLoading(true);
-      showError(null);
+    const elExamBar = document.getElementById("exam-bar");
+    const elExamStatus = document.getElementById("exam-status");
+    const elExamTimer = document.getElementById("exam-timer");
+    const examQuestionCountSelect = document.getElementById("exam-question-count");
+    const examDurationSelect = document.getElementById("exam-duration");
 
-      try {
-        const res = await fetch('philosophy_all_questions.json', {
-          cache: 'no-store'
-        });
+    const btnModePractice = document.getElementById("btn-mode-practice");
+    const btnModeExam = document.getElementById("btn-mode-exam");
+    const elModePillText = document.getElementById("mode-pill-text");
 
-        if (!res.ok) {
-          throw new Error('HTTP ' + res.status + ' — ' + res.statusText);
-        }
-
-        const data = await res.json();
-
-        if (!Array.isArray(data)) {
-          throw new Error('Ожидался массив вопросов, но пришло что-то другое.');
-        }
-
-        if (data.length === 0) {
-          throw new Error('В файле нет ни одного вопроса.');
-        }
-
-        state.questions = data.map((q, index) => ({
-          ...q,
-          _index: index + 1
-        }));
-
-        state.currentIndex = 0;
-        state.answers = state.questions.map(() => ({
-          selected: null,
-          isCorrect: null
-        }));
-        state.loaded = true;
-
-        showLoading(false);
-        showQuiz(true);
-        renderCurrentQuestion();
-        updateScorePreview();
-      } catch (err) {
-        console.error('Ошибка загрузки JSON:', err);
-        showLoading(false);
-        showError(err.message || 'Неизвестная ошибка при загрузке файла.');
-      }
-    }
-
+    // ====== HELPERS ======
     function showLoading(isLoading) {
       elLoading.hidden = !isLoading;
     }
@@ -789,204 +983,473 @@
     function showError(message) {
       if (!message) {
         elError.hidden = true;
-        elErrorMessage.textContent = '';
+        elErrorMessage.textContent = "";
         return;
       }
       elError.hidden = false;
       elErrorMessage.textContent = message;
     }
 
-    function showQuiz(show) {
-      elQuiz.hidden = !show;
+    function setWarning(show) {
+      elWarning.hidden = !show;
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function formatTime(seconds) {
+      const s = Math.max(0, Math.floor(seconds));
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      const mm = String(m).padStart(2, "0");
+      const ss = String(sec).padStart(2, "0");
+      return `${mm}:${ss}`;
+    }
+
+    // ====== MODE HANDLING ======
+    function updateUIForMode() {
+      if (state.mode === MODES.PRACTICE) {
+        btnModePractice.classList.add("mode-btn-active");
+        btnModeExam.classList.remove("mode-btn-active");
+        elModePillText.textContent = "Practice mode";
+        elExamBar.hidden = true;
+      } else {
+        btnModePractice.classList.remove("mode-btn-active");
+        btnModeExam.classList.add("mode-btn-active");
+        elModePillText.textContent = "Exam mode";
+        elExamBar.hidden = false;
+      }
+    }
+
+    function setMode(mode) {
+      if (mode === state.mode) return;
+
+      // clear exam timer when leaving exam
+      if (state.mode === MODES.EXAM) {
+        clearExamTimer();
+      }
+
+      state.mode = mode;
+      updateUIForMode();
+
+      if (!state.loaded || !state.allQuestions.length) {
+        return;
+      }
+
+      if (mode === MODES.PRACTICE) {
+        enterPracticeMode();
+      } else {
+        enterExamMode();
+      }
+    }
+
+    function enterPracticeMode() {
+      // use full original question set in original order
+      state.questions = state.allQuestions
+        .slice()
+        .sort((a, b) => (a._index || 0) - (b._index || 0));
+      state.answers = state.questions.map(() => ({
+        selected: null,
+        isCorrect: null,
+      }));
+      state.currentIndex = 0;
+
+      // reset exam state
+      state.exam.active = false;
+      state.exam.finished = false;
+      state.exam.timedOut = false;
+      clearExamTimer();
+      updateExamStatus();
+
       elResult.hidden = true;
+      elQuiz.hidden = false;
+      renderCurrentQuestion();
+      updateScorePreview();
     }
 
-    function showResult() {
-      elQuiz.hidden = true;
-      elResult.hidden = false;
+    function enterExamMode() {
+      // reset exam but do not start yet
+      state.exam.active = false;
+      state.exam.finished = false;
+      state.exam.timedOut = false;
+      clearExamTimer();
 
+      state.questions = [];
+      state.answers = [];
+      state.currentIndex = 0;
+
+      elResult.hidden = true;
+      elQuiz.hidden = false;
+      updateExamStatus();
+      renderCurrentQuestion();
+      updateScorePreview();
+    }
+
+    // ====== EXAM TIMER ======
+    function clearExamTimer() {
+      if (state.exam.timerId) {
+        clearInterval(state.exam.timerId);
+        state.exam.timerId = null;
+      }
+    }
+
+    function updateTimerDisplay() {
+      if (state.mode !== MODES.EXAM) {
+        elExamTimer.hidden = true;
+        return;
+      }
+      if (!state.exam.active && !state.exam.finished) {
+        elExamTimer.hidden = true;
+        return;
+      }
+      if (state.exam.totalSeconds <= 0) {
+        elExamTimer.hidden = true;
+        return;
+      }
+      elExamTimer.hidden = false;
+      elExamTimer.textContent = formatTime(state.exam.remainingSeconds);
+    }
+
+    function startExamTimer() {
+      clearExamTimer();
+      updateTimerDisplay();
+      state.exam.timerId = setInterval(() => {
+        if (!state.exam.active) {
+          clearExamTimer();
+          return;
+        }
+        state.exam.remainingSeconds -= 1;
+        if (state.exam.remainingSeconds <= 0) {
+          state.exam.remainingSeconds = 0;
+          updateTimerDisplay();
+          clearExamTimer();
+          finishExam(true);
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    // ====== EXAM STATUS ======
+    function updateExamStatus() {
+      if (state.mode !== MODES.EXAM) {
+        // nothing special
+        return;
+      }
+
+      if (!state.exam.active && !state.exam.finished) {
+        elExamStatus.textContent = "Exam not started";
+      } else if (state.exam.active && !state.exam.finished) {
+        elExamStatus.textContent = "Exam in progress";
+      } else if (state.exam.finished) {
+        elExamStatus.textContent = state.exam.timedOut
+          ? "Exam finished (time is over)"
+          : "Exam finished";
+      }
+
+      updateTimerDisplay();
+    }
+
+    function startExam() {
+      if (!state.loaded || !state.allQuestions.length) return;
+
+      const totalAvailable = state.allQuestions.length;
+      let countSetting = state.exam.config.questionCount;
+      let useCount = totalAvailable;
+
+      if (countSetting !== "all") {
+        const parsed = parseInt(countSetting, 10);
+        if (!Number.isNaN(parsed) && parsed > 0) {
+          useCount = Math.min(parsed, totalAvailable);
+        }
+      }
+
+      const pool = state.allQuestions.slice();
+      shuffleArray(pool);
+      const selected = pool.slice(0, useCount);
+
+      state.questions = selected;
+      state.answers = selected.map(() => ({ selected: null, isCorrect: null }));
+      state.currentIndex = 0;
+
+      const durationMin = state.exam.config.durationMinutes;
+      state.exam.active = true;
+      state.exam.finished = false;
+      state.exam.timedOut = false;
+
+      clearExamTimer();
+
+      if (durationMin > 0) {
+        state.exam.totalSeconds = durationMin * 60;
+        state.exam.remainingSeconds = state.exam.totalSeconds;
+        startExamTimer();
+      } else {
+        state.exam.totalSeconds = 0;
+        state.exam.remainingSeconds = 0;
+      }
+
+      elResult.hidden = true;
+      elQuiz.hidden = false;
+      updateExamStatus();
+      renderCurrentQuestion();
+      updateScorePreview();
+    }
+
+    function resetExam() {
+      clearExamTimer();
+      state.exam.active = false;
+      state.exam.finished = false;
+      state.exam.timedOut = false;
+      state.exam.totalSeconds = 0;
+      state.exam.remainingSeconds = 0;
+
+      state.questions = [];
+      state.answers = [];
+      state.currentIndex = 0;
+
+      updateExamStatus();
+      renderCurrentQuestion();
+      updateScorePreview();
+    }
+
+    function finishExam(timedOut = false) {
+      if (state.exam.finished) return;
+
+      state.exam.active = false;
+      state.exam.finished = true;
+      state.exam.timedOut = !!timedOut;
+      clearExamTimer();
+
+      if (state.questions.length > 0) {
+        state.answers.forEach((aState, idx) => {
+          const q = state.questions[idx];
+          if (!q) return;
+          aState.isCorrect = aState.selected === q.answer;
+        });
+      }
+
+      updateExamStatus();
+      updateScorePreview();
+      showResult(timedOut);
+    }
+
+    // ====== SCORE PREVIEW ======
+    function updateScorePreview() {
       const total = state.questions.length;
-      const correct = state.answers.filter(a => a.isCorrect === true).length;
-      const percent = Math.round((correct / total) * 100);
+      if (!state.loaded || !total) {
+        elScorePreview.textContent = "No questions loaded";
+        return;
+      }
 
-      elResultCorrect.textContent = correct;
-      elResultTotal.textContent = total;
-      elResultPercent.textContent = percent;
-
-      let label;
-      if (percent >= 90) label = 'Бог философии 😎';
-      else if (percent >= 75) label = 'Очень круто, ещё чуть-чуть — и топ!';
-      else if (percent >= 60) label = 'Неплохо, но можно лучше — пройди ещё раз.';
-      else label = 'Норм как тренировка, но нужно подтянуть темы.';
-
-      elResultLabel.textContent = label;
-
-      const wrong = total - correct;
-      elResultDetails.textContent =
-        `Верных ответов: ${correct}, ошибок: ${wrong}. ` +
-        `Можно пересдать тест и следить за прогрессом по темам.`;
-
-      mainMode = 'finish';
+      if (state.mode === MODES.PRACTICE) {
+        const checked = state.answers.filter((a) => a.isCorrect !== null).length;
+        const correct = state.answers.filter((a) => a.isCorrect === true).length;
+        if (checked === 0) {
+          elScorePreview.textContent = "No answers checked yet";
+        } else {
+          elScorePreview.textContent = `${correct} / ${checked} correct`;
+        }
+      } else {
+        if (!state.exam.active && !state.exam.finished) {
+          elScorePreview.textContent = "Exam not started";
+        } else if (state.exam.active && !state.exam.finished) {
+          const answered = state.answers.filter(
+            (a) => a.selected !== null
+          ).length;
+          elScorePreview.textContent = `Answered ${answered} / ${total}`;
+        } else if (state.exam.finished) {
+          const correct = state.answers.filter(
+            (a) => a.isCorrect === true
+          ).length;
+          elScorePreview.textContent = `Correct ${correct} / ${total}`;
+        }
+      }
     }
 
-    // ====== ОТРИСОВКА ТЕКУЩЕГО ВОПРОСА ======
+    // ====== RENDER CURRENT QUESTION ======
     function renderCurrentQuestion() {
+      const total = state.questions.length;
+
+      // exam mode & exam not started yet
+      if (state.mode === MODES.EXAM && !state.exam.active && !state.exam.finished) {
+        elQuestionCounter.textContent = "Exam not started";
+        elProgressBar.style.width = "0%";
+        elQuestionMeta.textContent =
+          "Adjust exam settings above and press “Start exam”.";
+        elQuestionText.textContent = "–";
+        elOptions.innerHTML = "";
+        btnPrev.disabled = true;
+        btnMain.textContent = "Start exam";
+        setWarning(false);
+        return;
+      }
+
+      if (!total || state.currentIndex < 0 || state.currentIndex >= total) {
+        // nothing to show
+        elQuestionCounter.textContent = "No questions";
+        elProgressBar.style.width = "0%";
+        elQuestionMeta.textContent = "";
+        elQuestionText.textContent = "No question data.";
+        elOptions.innerHTML = "";
+        btnPrev.disabled = true;
+        btnMain.textContent =
+          state.mode === MODES.EXAM ? "Start exam" : "Check answer";
+        setWarning(false);
+        return;
+      }
+
       const q = state.questions[state.currentIndex];
       const aState = state.answers[state.currentIndex];
 
-      // Счётчик и прогресс
-      const total = state.questions.length;
-      const num = state.currentIndex + 1;
+      const indexDisplay = state.currentIndex + 1;
+      elQuestionCounter.textContent = `Question ${indexDisplay} of ${total}`;
+      elProgressBar.style.width = `${(indexDisplay / total) * 100}%`;
 
-      elQuestionCounter.textContent = `Вопрос ${num} из ${total}`;
-      elProgressBar.style.width = `${(num / total) * 100}%`;
+      elQuestionMeta.textContent = `ID: ${q.id ?? q._index ?? indexDisplay}`;
+      elQuestionText.textContent =
+        q.question ?? "Question text is missing (check JSON).";
 
-      // Мета / ID
-      elQuestionMeta.textContent = `ID: ${q.id ?? q._index}`;
-
-      // Текст вопроса
-      elQuestionText.textContent = q.question ?? 'Без текста вопроса (проверь JSON).';
-
-      // Варианты
-      elOptions.innerHTML = '';
-
+      // Options
+      elOptions.innerHTML = "";
       const optionsObj = q.options || {};
       const entries = Object.entries(optionsObj).sort((a, b) =>
         a[0].localeCompare(b[0])
       );
 
       entries.forEach(([letter, text]) => {
-        const optionEl = document.createElement('div');
-        optionEl.className = 'option';
+        const optionEl = document.createElement("div");
+        optionEl.className = "option";
 
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'option-btn';
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
         btn.dataset.letter = letter;
 
-        const letterSpan = document.createElement('div');
-        letterSpan.className = 'option-letter';
+        const letterSpan = document.createElement("div");
+        letterSpan.className = "option-letter";
         letterSpan.textContent = letter;
 
-        const textSpan = document.createElement('div');
-        textSpan.className = 'option-text';
+        const textSpan = document.createElement("div");
+        textSpan.className = "option-text";
         textSpan.textContent = text;
 
         btn.appendChild(letterSpan);
         btn.appendChild(textSpan);
         optionEl.appendChild(btn);
 
-        // Иконка статуса (после проверки)
-        const statusIcon = document.createElement('div');
-        statusIcon.className = 'option-status-icon';
+        const statusIcon = document.createElement("div");
+        statusIcon.className = "option-status-icon";
         optionEl.appendChild(statusIcon);
 
-        btn.addEventListener('click', () => handleOptionClick(letter));
+        btn.addEventListener("click", () => handleOptionClick(letter));
 
         elOptions.appendChild(optionEl);
       });
 
-      // Применяем стили по состоянию (выбор и правильность)
       applyOptionStyles();
 
-      // Кнопки
-      btnPrev.disabled = state.currentIndex === 0;
-      updateMainButtonMode();
+      // Buttons & main button label
+      if (state.mode === MODES.PRACTICE) {
+        btnPrev.disabled = state.currentIndex === 0;
+        const last = state.currentIndex === total - 1;
+        if (aState.isCorrect === null) {
+          btnMain.textContent = "Check answer";
+        } else {
+          btnMain.textContent = last ? "Finish practice" : "Next question";
+        }
+      } else {
+        // Exam mode
+        const last = state.currentIndex === total - 1;
+        if (state.exam.active && !state.exam.finished) {
+          btnPrev.disabled = state.currentIndex === 0;
+          btnMain.textContent = last ? "Finish exam" : "Next";
+        } else if (state.exam.finished) {
+          btnPrev.disabled = state.currentIndex === 0;
+          btnMain.textContent = last ? "Back to summary" : "Next question";
+        }
+      }
 
-      // Убираем предупреждение
       setWarning(false);
     }
 
     function applyOptionStyles() {
+      const total = state.questions.length;
+      if (!total || state.currentIndex < 0 || state.currentIndex >= total) return;
+
       const aState = state.answers[state.currentIndex];
       const q = state.questions[state.currentIndex];
 
-      const optionNodes = elOptions.querySelectorAll('.option');
-      optionNodes.forEach(optionEl => {
-        const btn = optionEl.querySelector('.option-btn');
-        const letterSpan = optionEl.querySelector('.option-letter');
-        const icon = optionEl.querySelector('.option-status-icon');
+      const optionNodes = elOptions.querySelectorAll(".option");
+      optionNodes.forEach((optionEl) => {
+        const btn = optionEl.querySelector(".option-btn");
+        const icon = optionEl.querySelector(".option-status-icon");
         const letter = btn.dataset.letter;
 
-        optionEl.classList.remove('option-selected');
-        btn.classList.remove('option-correct', 'option-wrong');
-        icon.textContent = '';
-        icon.className = 'option-status-icon';
+        optionEl.classList.remove("option-selected");
+        btn.classList.remove("option-correct", "option-wrong");
+        icon.textContent = "";
+        icon.className = "option-status-icon";
 
-        // выбранный вариант
         if (aState.selected === letter) {
-          optionEl.classList.add('option-selected');
+          optionEl.classList.add("option-selected");
         }
 
-        // если уже проверено — показать результат
         if (aState.isCorrect !== null) {
           if (letter === q.answer) {
-            btn.classList.add('option-correct');
-            icon.textContent = '✔';
-            icon.classList.add('correct');
+            btn.classList.add("option-correct");
+            icon.textContent = "✔";
+            icon.classList.add("correct");
           } else if (letter === aState.selected) {
-            btn.classList.add('option-wrong');
-            icon.textContent = '✖';
-            icon.classList.add('wrong');
+            btn.classList.add("option-wrong");
+            icon.textContent = "✖";
+            icon.classList.add("wrong");
           }
         }
       });
     }
 
-    // ====== ЛОГИКА УПРАВЛЕНИЯ ======
+    // ====== HANDLERS ======
     function handleOptionClick(letter) {
+      const total = state.questions.length;
+      if (!total || state.currentIndex < 0 || state.currentIndex >= total) return;
+
       const aState = state.answers[state.currentIndex];
 
-      // Если уже проверено — не даём менять ответ
+      // In both practice and exam review we freeze answers after we know correct
       if (aState.isCorrect !== null) return;
+      if (state.mode === MODES.EXAM && state.exam.finished) return;
 
       aState.selected = letter;
       applyOptionStyles();
       setWarning(false);
-    }
-
-    function setWarning(show) {
-      elWarning.hidden = !show;
-    }
-
-    function updateScorePreview() {
-      const totalChecked = state.answers.filter(a => a.isCorrect !== null).length;
-      const correct = state.answers.filter(a => a.isCorrect === true).length;
-
-      if (totalChecked === 0) {
-        elScorePreview.textContent = '0 / 0 верных';
-      } else {
-        elScorePreview.textContent = `${correct} / ${totalChecked} верных`;
-      }
-    }
-
-    function updateMainButtonMode() {
-      const aState = state.answers[state.currentIndex];
-      const last = state.currentIndex === state.questions.length - 1;
-
-      if (aState.isCorrect === null) {
-        mainMode = 'check';
-        btnMain.textContent = 'Проверить';
-      } else if (!last) {
-        mainMode = 'next';
-        btnMain.textContent = 'Дальше';
-      } else {
-        mainMode = 'finish';
-        btnMain.textContent = 'Завершить тест';
+      if (state.mode === MODES.EXAM && state.exam.active) {
+        // live update answered count
+        updateScorePreview();
       }
     }
 
     function handlePrev() {
-      if (state.currentIndex === 0) return;
-      state.currentIndex--;
+      if (state.currentIndex <= 0) return;
+      state.currentIndex -= 1;
       renderCurrentQuestion();
+      updateScorePreview();
     }
 
-    function handleMainButton() {
+    function handleMainPractice() {
+      const total = state.questions.length;
+      if (!total) return;
+
       const aState = state.answers[state.currentIndex];
       const q = state.questions[state.currentIndex];
+      const last = state.currentIndex === total - 1;
 
-      if (mainMode === 'check') {
+      if (aState.isCorrect === null) {
+        // check
         if (!aState.selected) {
           setWarning(true);
           return;
@@ -994,68 +1457,233 @@
         aState.isCorrect = aState.selected === q.answer;
         applyOptionStyles();
         updateScorePreview();
-        updateMainButtonMode();
-      } else if (mainMode === 'next') {
-        if (state.currentIndex < state.questions.length - 1) {
-          state.currentIndex++;
-          renderCurrentQuestion();
+
+        const newLast = state.currentIndex === total - 1;
+        if (newLast) {
+          btnMain.textContent = "Finish practice";
+        } else {
+          btnMain.textContent = "Next question";
         }
-      } else if (mainMode === 'finish') {
-        showResult();
+      } else {
+        // already checked, move next or finish
+        if (!last) {
+          state.currentIndex += 1;
+          renderCurrentQuestion();
+          updateScorePreview();
+        } else {
+          showResult(false);
+        }
       }
     }
 
-    function softRestart() {
-      if (!state.loaded || state.questions.length === 0) return;
-
-      state.currentIndex = 0;
-      state.answers = state.questions.map(() => ({
-        selected: null,
-        isCorrect: null
-      }));
-
-      renderCurrentQuestion();
-      updateScorePreview();
-      showQuiz(true);
-    }
-
-    function hardRestart() {
-      // полностью перезагружаем с JSON (можно сделать просто softRestart, но так безопаснее)
-      state.questions = [];
-      state.answers = [];
-      state.currentIndex = 0;
-      state.loaded = false;
-      showResult(false);
-      showQuiz(false);
-      loadQuestions();
-    }
-
-    function showResult(show) {
-      if (typeof show === 'boolean') {
-        elResult.hidden = !show;
+    function handleMainExam() {
+      if (!state.exam.active && !state.exam.finished) {
+        // start exam
+        startExam();
         return;
       }
-      // иначе просто показать (используется в showResult())
-      elResult.hidden = false;
+
+      const total = state.questions.length;
+      if (!total) return;
+
+      if (state.exam.active && !state.exam.finished) {
+        const aState = state.answers[state.currentIndex];
+        const last = state.currentIndex === total - 1;
+
+        if (!aState.selected) {
+          setWarning(true);
+          return;
+        }
+
+        if (!last) {
+          state.currentIndex += 1;
+          renderCurrentQuestion();
+          updateScorePreview();
+        } else {
+          finishExam(false);
+        }
+      } else if (state.exam.finished) {
+        // review mode
+        const last = state.currentIndex === total - 1;
+        if (!last) {
+          state.currentIndex += 1;
+          renderCurrentQuestion();
+        } else {
+          // back to summary screen
+          elQuiz.hidden = true;
+          elResult.hidden = false;
+        }
+      }
     }
 
-    // ====== ОБРАБОТКА СОБЫТИЙ ======
-    btnPrev.addEventListener('click', handlePrev);
-    btnMain.addEventListener('click', handleMainButton);
-    btnRestartSoft.addEventListener('click', softRestart);
-    btnRestart.addEventListener('click', hardRestart);
-    btnReview.addEventListener('click', () => {
-      // после результата вернуться к обзору вопросов
+    function handleMainButton() {
+      if (state.mode === MODES.PRACTICE) {
+        handleMainPractice();
+      } else {
+        handleMainExam();
+      }
+    }
+
+    function handleSoftRestart() {
+      if (!state.loaded || !state.allQuestions.length) return;
+
+      if (state.mode === MODES.PRACTICE) {
+        enterPracticeMode();
+      } else {
+        const needConfirm =
+          state.exam.active || state.exam.finished || state.questions.length;
+        if (needConfirm) {
+          const ok = confirm(
+            "Reset exam session? Current answers will be lost."
+          );
+          if (!ok) return;
+        }
+        resetExam();
+      }
+    }
+
+    function showResult(timedOut = false) {
+      elQuiz.hidden = true;
+      elResult.hidden = false;
+
+      const total = state.questions.length;
+      const correct = state.answers.filter((a) => a.isCorrect === true).length;
+      const percent = total ? Math.round((correct / total) * 100) : 0;
+
+      elResultCorrect.textContent = correct;
+      elResultTotal.textContent = total;
+      elResultPercent.textContent = percent;
+
+      let label;
+      if (percent >= 90) {
+        label =
+          state.mode === MODES.EXAM
+            ? "Philosophy god-mode 🤯"
+            : "Insane performance, keep it!";
+      } else if (percent >= 75) {
+        label =
+          state.mode === MODES.EXAM
+            ? "Strong result — ready for the real exam."
+            : "Very good, a bit more drilling and you’re perfect.";
+      } else if (percent >= 60) {
+        label =
+          state.mode === MODES.EXAM
+            ? "Not bad, but you should review the weak spots."
+            : "Okay as practice, but you can push this higher.";
+      } else {
+        label =
+          state.mode === MODES.EXAM
+            ? "Treat this as a diagnostic attempt. Time to revise theory."
+            : "Good warm-up, but you definitely need more practice.";
+      }
+
+      elResultLabel.textContent = label;
+
+      if (state.mode === MODES.EXAM) {
+        const unanswered = state.answers.filter(
+          (a) => a.selected === null
+        ).length;
+        let extra = `Exam mode. Correct: ${correct}, wrong: ${
+          total - correct
+        }, unanswered: ${unanswered}.`;
+        if (timedOut) {
+          extra += " The exam was auto-submitted when time ran out.";
+        }
+        elResultDetails.textContent = extra;
+      } else {
+        const wrong = total - correct;
+        elResultDetails.textContent = `Practice mode. Correct: ${correct}, wrong: ${wrong}. You can restart or review each question with highlighted answers.`;
+      }
+    }
+
+    // ====== DATA LOAD ======
+    async function loadQuestions() {
+      showLoading(true);
+      showError(null);
+
+      try {
+        const res = await fetch("philosophy_all_questions.json", {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          throw new Error("HTTP " + res.status + " — " + res.statusText);
+        }
+
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Expected an array of questions in JSON.");
+        }
+        if (data.length === 0) {
+          throw new Error("JSON file contains no questions.");
+        }
+
+        state.allQuestions = data.map((q, index) => ({
+          ...q,
+          _index: index + 1,
+        }));
+
+        state.loaded = true;
+        showLoading(false);
+        elQuiz.hidden = false;
+        elResult.hidden = true;
+
+        // Enter default mode (practice) using full set
+        enterPracticeMode();
+      } catch (err) {
+        console.error("JSON load error:", err);
+        showLoading(false);
+        showError(err.message || "Unknown error while loading JSON.");
+      }
+    }
+
+    // ====== EVENT LISTENERS ======
+    btnPrev.addEventListener("click", handlePrev);
+    btnMain.addEventListener("click", handleMainButton);
+    btnRestartSoft.addEventListener("click", handleSoftRestart);
+    btnRestart.addEventListener("click", () => {
+      if (state.mode === MODES.PRACTICE) {
+        enterPracticeMode();
+      } else {
+        resetExam();
+        startExam();
+      }
+      elResult.hidden = true;
+      elQuiz.hidden = false;
+    });
+    btnReview.addEventListener("click", () => {
+      if (!state.loaded || !state.questions.length) return;
       state.currentIndex = 0;
+      elResult.hidden = true;
+      elQuiz.hidden = false;
       renderCurrentQuestion();
-      showQuiz(true);
+      updateScorePreview();
     });
 
-    // Enter — проверить/дальше/завершить
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        // чтобы не триггерить по Enter в инпутах (если вдруг добавишь)
-        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+    // Mode toggle
+    btnModePractice.addEventListener("click", () => setMode(MODES.PRACTICE));
+    btnModeExam.addEventListener("click", () => setMode(MODES.EXAM));
+
+    // Exam config
+    examQuestionCountSelect.addEventListener("change", () => {
+      state.exam.config.questionCount = examQuestionCountSelect.value;
+    });
+    examDurationSelect.addEventListener("change", () => {
+      const val = parseInt(examDurationSelect.value, 10);
+      state.exam.config.durationMinutes = Number.isNaN(val) ? 0 : val;
+    });
+    // init config from default select values
+    state.exam.config.questionCount = examQuestionCountSelect.value;
+    state.exam.config.durationMinutes =
+      parseInt(examDurationSelect.value, 10) || 0;
+
+    // Enter key — main action
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        if (
+          e.target &&
+          (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
+        ) {
           return;
         }
         e.preventDefault();
@@ -1065,7 +1693,8 @@
       }
     });
 
-    // ====== СТАРТ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ======
+    // Initial UI state
+    updateUIForMode();
     loadQuestions();
   </script>
 </body>
